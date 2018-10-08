@@ -1,0 +1,8 @@
+{
+  "name": "mobx-jsonapi",
+  "version": "0.0.1",
+  "description": "A JSON API client and store layer for MobX",
+  "main": "index.js",
+  "author": "Josh Justice <me@codingitwrong.com>",
+  "license": "Apache-2.0"
+}
