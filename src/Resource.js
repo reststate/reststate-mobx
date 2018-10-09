@@ -5,11 +5,11 @@ export default class Resource {
   }
 
   save() {
-    const { id, attributes, relationships } = this;
-    this.client.update({ id, attributes, relationships });
+    const { type, id, attributes, relationships } = this;
+    return this.client.update({ type, id, attributes, relationships });
   }
 
   delete() {
-    this.client.delete({ id: this.id });
+    return this.client.delete({ id: this.id });
   }
 }
