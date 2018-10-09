@@ -164,6 +164,67 @@ describe('ResourceStore', () => {
     });
   });
 
+  describe('loadRelated', () => {
+    const parent = {
+      type: 'users',
+      id: '42',
+    };
+    let resolvedRecords;
+
+    beforeEach(() => {
+      store.storeRecords([
+        {
+          type: 'widgets',
+          id: '1',
+          attributes: {
+            title: 'Non-Matching',
+          },
+        },
+      ]);
+      api.get.mockResolvedValue({
+        data: [
+          {
+            type: 'widget',
+            id: '2',
+            attributes: {
+              title: 'Foo',
+            },
+          },
+          {
+            type: 'widget',
+            id: '3',
+            attributes: {
+              title: 'Bar',
+            },
+          },
+        ],
+      });
+
+      return store.loadRelated(parent)
+        .then(response => {
+          resolvedRecords = response;
+        });
+    });
+
+    it('passes the filter on to the server', () => {
+      expect(api.get).toHaveBeenCalledWith(
+        'users/42/widgets?',
+      );
+    });
+
+    it('resolves to the returned results', () => {
+      expect(resolvedRecords.length).toEqual(2);
+
+      const firstRecord = resolvedRecords[0];
+      expect(firstRecord.id).toEqual('2');
+      expect(firstRecord.attributes.title).toEqual('Foo');
+    });
+
+    it('stores the records in the list of all records', () => {
+      expect(store.records.length).toEqual(3);
+    });
+  });
+
   describe('create', () => {
     const widget = {
       attributes: {

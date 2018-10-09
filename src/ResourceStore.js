@@ -46,8 +46,17 @@ export default class ResourceStore {
       });
   }
 
-  loadRelated() {
-
+  loadRelated(parent, { options } = {}) {
+    return this.client.related({ parent, options })
+      .then(records => {
+        return records.map(record => (
+          new Resource({ record, client: this.client })
+        ));
+      })
+      .then(resources => {
+        resources.forEach(storeRecord(this.records));
+        return resources;
+      });
   }
 
   create(partialRecord) {
