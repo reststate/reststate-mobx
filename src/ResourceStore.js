@@ -1,6 +1,15 @@
 import { ResourceClient } from 'jsonapi-client';
 import Resource from './Resource';
 
+const storeRecord = (records) => (newRecord) => {
+  const existingRecord = records.find(r => r.id === newRecord.id);
+  if (existingRecord) {
+    Object.assign(existingRecord, newRecord);
+  } else {
+    records.push(newRecord);
+  }
+};
+
 export default class ResourceStore {
   records = []
 
@@ -8,15 +17,20 @@ export default class ResourceStore {
     this.client = new ResourceClient({ name, httpClient });
   }
 
-  loadAll({ options } = {}) {
-    return this.client.all({ options })
-      .then(records => {
-        this.records = records.map(record => new Resource({ record, client: this.client }));
-      });
+  storeRecords(records) {
+    this.records = records.map(record => (
+      new Resource({ record, client: this.client })
+    ));
   }
 
-  loadById() {
+  loadAll({ options } = {}) {
+    return this.client.all({ options })
+      .then(records => records.forEach(storeRecord(this.records)));
+  }
 
+  loadById(id) {
+    return this.client.find(id)
+      .then(storeRecord(this.records));
   }
 
   loadWhere() {

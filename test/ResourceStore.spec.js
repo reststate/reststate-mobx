@@ -32,4 +32,73 @@ describe('ResourceStore', () => {
         });
     });
   });
+
+  describe('loadById', () => {
+    describe('when the record is not yet present in the store', () => {
+      beforeEach(() => {
+        store.storeRecords([
+          {
+            type: 'widgets',
+            id: '27',
+          },
+        ]);
+      });
+
+      it('adds the record to the list of all records', () => {
+        const id = '42';
+        const record = {
+          type: 'widgets',
+          id,
+          attributes: {
+            title: 'New Title',
+          },
+        };
+        api.get.mockResolvedValue({ data: record });
+        return store.loadById(id)
+          .then(() => {
+            const { records } = store;
+
+            expect(records.length).toEqual(2);
+
+            const storedRecord = records.find(r => r.id === id);
+            expect(storedRecord.attributes.title).toEqual('New Title');
+          });
+      });
+    });
+
+    describe('when the record is already present in the store', () => {
+      beforeEach(() => {
+        store.storeRecords([
+          {
+            type: 'widgets',
+            id: '42',
+            attributes: {
+              title: 'Old Title',
+            },
+          },
+        ]);
+      });
+
+      it('adds the record to the list of all records', () => {
+        const id = '42';
+        const record = {
+          type: 'widgets',
+          id,
+          attributes: {
+            title: 'New Title',
+          },
+        };
+        api.get.mockResolvedValue({ data: record });
+        return store.loadById(id)
+          .then(() => {
+            const { records } = store;
+
+            expect(records.length).toEqual(1);
+
+            const storedRecord = records[0];
+            expect(storedRecord.attributes.title).toEqual('New Title');
+          });
+      });
+    });
+  });
 });
