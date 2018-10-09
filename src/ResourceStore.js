@@ -33,8 +33,17 @@ export default class ResourceStore {
       .then(storeRecord(this.records));
   }
 
-  loadWhere() {
-
+  loadWhere(criteria, { options } = {}) {
+    return this.client.where(criteria, { options })
+      .then(records => {
+        return records.map(record => (
+          new Resource({ record, client: this.client })
+        ));
+      })
+      .then(resources => {
+        resources.forEach(storeRecord(this.records));
+        return resources;
+      });
   }
 
   loadRelated() {
