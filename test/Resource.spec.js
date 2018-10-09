@@ -8,6 +8,7 @@ describe('Resource', () => {
   beforeEach(() => {
     api = {
       patch: jest.fn(),
+      delete: jest.fn(),
     };
     client = new ResourceClient({
       name: 'widgets',
@@ -55,6 +56,25 @@ describe('Resource', () => {
               },
             },
           );
+        });
+    });
+  });
+
+  describe('delete', () => {
+    it('sends the correct API request', () => {
+      const resource = new Resource({
+        client,
+        record: {
+          type: 'widgets',
+          id: '42',
+        },
+      });
+
+      api.delete.mockResolvedValue();
+
+      return resource.delete()
+        .then(() => {
+          expect(api.delete).toHaveBeenCalledWith('widgets/42');
         });
     });
   });
