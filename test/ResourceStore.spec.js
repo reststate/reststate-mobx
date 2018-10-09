@@ -7,6 +7,7 @@ describe('ResourceStore', () => {
   beforeEach(() => {
     api = {
       get: jest.fn(),
+      post: jest.fn(),
     };
     store = new ResourceStore({
       name: 'widgets',
@@ -99,6 +100,46 @@ describe('ResourceStore', () => {
             expect(storedRecord.attributes.title).toEqual('New Title');
           });
       });
+    });
+  });
+
+  describe('create', () => {
+    const widget = {
+      attributes: {
+        title: 'Baz',
+      },
+    };
+
+    beforeEach(() => {
+      api.post.mockResolvedValue({
+        data: {
+          data: {
+            type: 'widget',
+            id: '27',
+            attributes: widget.attributes,
+          },
+        },
+      });
+      return store.create(widget);
+    });
+
+    it('sends the request to the server', () => {
+      const expectedBody = {
+        data: {
+          type: 'widgets',
+          attributes: widget.attributes,
+        },
+      };
+      expect(api.post).toHaveBeenCalledWith('widgets', expectedBody);
+    });
+
+    it('stores the record to the list', () => {
+      const { records } = store;
+      expect(records.length).toEqual(1);
+
+      const firstRecord = records[0];
+      expect(firstRecord.id).toEqual('27');
+      expect(firstRecord.attributes.title).toEqual('Baz');
     });
   });
 });

@@ -43,6 +43,7 @@ export default class ResourceStore {
 
   create(partialRecord) {
     return this.client.create(partialRecord)
-      .then(record => new Resource({ record, client: this.client }));
+      .then(response => response.data)
+      .then(storeRecord(this.records));
   }
 }
