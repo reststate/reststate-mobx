@@ -28,13 +28,13 @@ export default class ResourceStore {
       .then(records => records.forEach(storeRecord(this.records)));
   }
 
-  loadById(id) {
-    return this.client.find(id)
+  loadById({ id, options }) {
+    return this.client.find(id, { options })
       .then(storeRecord(this.records));
   }
 
-  loadWhere(criteria, { options } = {}) {
-    return this.client.where(criteria, { options })
+  loadWhere({ filter, options } = {}) {
+    return this.client.where(filter, { options })
       .then(records => {
         return records.map(record => (
           new Resource({ record, client: this.client })
@@ -46,7 +46,7 @@ export default class ResourceStore {
       });
   }
 
-  loadRelated(parent, { options } = {}) {
+  loadRelated({ parent, options } = {}) {
     return this.client.related({ parent, options })
       .then(records => {
         return records.map(record => (

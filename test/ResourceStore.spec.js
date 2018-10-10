@@ -1,6 +1,10 @@
 import ResourceStore from '../src/ResourceStore';
 
 describe('ResourceStore', () => {
+  const includeOptions = {
+    include: 'customers',
+  };
+
   let store;
   let api;
 
@@ -32,6 +36,16 @@ describe('ResourceStore', () => {
           expect(record.id).toEqual('1');
         });
     });
+
+    it('allows including related records', () => {
+      const records = [];
+      api.get.mockResolvedValue({ data: records });
+
+      return store.loadAll({ options: includeOptions })
+        .then(() => {
+          expect(api.get).toHaveBeenCalledWith('widgets?include=customers');
+        });
+    });
   });
 
   describe('loadById', () => {
@@ -55,10 +69,11 @@ describe('ResourceStore', () => {
           },
         };
         api.get.mockResolvedValue({ data: record });
-        return store.loadById(id)
+        return store.loadById({ id, options: includeOptions })
           .then(() => {
-            const { records } = store;
+            expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
 
+            const { records } = store;
             expect(records.length).toEqual(2);
 
             const storedRecord = records.find(r => r.id === id);
@@ -90,10 +105,11 @@ describe('ResourceStore', () => {
           },
         };
         api.get.mockResolvedValue({ data: record });
-        return store.loadById(id)
+        return store.loadById({ id, options: includeOptions })
           .then(() => {
-            const { records } = store;
+            expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
 
+            const { records } = store;
             expect(records.length).toEqual(1);
 
             const storedRecord = records[0];
@@ -139,7 +155,7 @@ describe('ResourceStore', () => {
         status: 'draft',
       };
 
-      return store.loadWhere(filter)
+      return store.loadWhere({ filter, options: includeOptions })
         .then(response => {
           resolvedRecords = response;
         });
@@ -147,7 +163,7 @@ describe('ResourceStore', () => {
 
     it('passes the filter on to the server', () => {
       expect(api.get).toHaveBeenCalledWith(
-        'widgets?filter[status]=draft&',
+        'widgets?filter[status]=draft&include=customers',
       );
     });
 
@@ -200,7 +216,7 @@ describe('ResourceStore', () => {
         ],
       });
 
-      return store.loadRelated(parent)
+      return store.loadRelated({ parent, options: includeOptions })
         .then(response => {
           resolvedRecords = response;
         });
@@ -208,7 +224,7 @@ describe('ResourceStore', () => {
 
     it('passes the filter on to the server', () => {
       expect(api.get).toHaveBeenCalledWith(
-        'users/42/widgets?',
+        'users/42/widgets?include=customers',
       );
     });
 
