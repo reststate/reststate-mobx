@@ -158,23 +158,23 @@ store.create(recordData);
 
 ### update
 
-To update records, pass the entire updated record object to the `update` method:
+The returned record objects are instances of `Record`. To update records, mutate attributes, then call `update()` on the record:
 
 ```javascript
 store.findById({ id: 42 })
   .then(widget => {
     widget.attributes.title = 'Updated Title';
-    return store.update(widget);
+    return widget.update();
   });
 ```
 
 ### delete
 
-To delete, pass either a full record or just an object with an ID field:
+To delete, call `delete()` on a record:
 
 ```javascript
-const widgetIdObject = { id: 42 };
-store.delete(widgetIdObject);
+store.findById({ id: 42 })
+  .then(widget => widget.delete());
 ```
 
 ## License
