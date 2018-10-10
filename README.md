@@ -161,7 +161,7 @@ store.create(recordData);
 To update records, pass the entire updated record object to the `update` method:
 
 ```javascript
-store.findById({ id: 42})
+store.findById({ id: 42 })
   .then(widget => {
     widget.attributes.title = 'Updated Title';
     return store.update(widget);
