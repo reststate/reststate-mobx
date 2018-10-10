@@ -29,12 +29,12 @@ export default class ResourceStore {
   }
 
   loadById({ id, options }) {
-    return this.client.find(id, { options })
+    return this.client.find({ id, options })
       .then(storeRecord(this.records));
   }
 
   loadWhere({ filter, options } = {}) {
-    return this.client.where(filter, { options })
+    return this.client.where({ filter, options })
       .then(records => {
         return records.map(record => (
           new Resource({ record, client: this.client })
