@@ -4,6 +4,7 @@ import { ResourceClient } from 'jsonapi-client';
 describe('Resource', () => {
   let api;
   let client;
+  let resource;
 
   beforeEach(() => {
     api = {
@@ -17,8 +18,16 @@ describe('Resource', () => {
   });
 
   describe('save', () => {
-    it('sends the correct API request', () => {
-      const resource = new Resource({
+    const expectedRecord = {
+      type: 'widgets',
+      id: '42',
+      attributes: {
+        title: 'New Title',
+      },
+    };
+
+    beforeEach(() => {
+      resource = new Resource({
         client,
         record: {
           type: 'widgets',
@@ -29,14 +38,6 @@ describe('Resource', () => {
         },
       });
 
-      const expectedRecord = {
-        type: 'widgets',
-        id: '42',
-        attributes: {
-          title: 'New Title',
-        },
-      };
-
       api.patch.mockResolvedValue({
         data: {
           data: expectedRecord,
@@ -45,24 +46,25 @@ describe('Resource', () => {
 
       resource.attributes.title = 'New Title';
 
-      return resource.save()
-        .then(() => {
-          expect(api.patch).toHaveBeenCalledWith(
-            'widgets/42',
-            {
-              data: {
-                ...expectedRecord,
-                relationships: undefined,
-              },
-            },
-          );
-        });
+      return resource.save();
+    });
+
+    it('sends the correct API request', () => {
+      expect(api.patch).toHaveBeenCalledWith(
+        'widgets/42',
+        {
+          data: {
+            ...expectedRecord,
+            relationships: undefined,
+          },
+        },
+      );
     });
   });
 
   describe('delete', () => {
-    it('sends the correct API request', () => {
-      const resource = new Resource({
+    beforeEach(() => {
+      resource = new Resource({
         client,
         record: {
           type: 'widgets',
@@ -72,10 +74,11 @@ describe('Resource', () => {
 
       api.delete.mockResolvedValue();
 
-      return resource.delete()
-        .then(() => {
-          expect(api.delete).toHaveBeenCalledWith('widgets/42');
-        });
+      return resource.delete();
+    });
+
+    it('sends the correct API request', () => {
+      expect(api.delete).toHaveBeenCalledWith('widgets/42');
     });
   });
 });
