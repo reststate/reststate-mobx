@@ -295,7 +295,7 @@ describe('ResourceStore', () => {
       return store.loadWhere({ filter });
     });
 
-    it('resolves to the results by filter', () => {
+    it('returns the results by filter', () => {
       const records = store.where({ filter });
       expect(records.length).toEqual(2);
 
@@ -365,6 +365,56 @@ describe('ResourceStore', () => {
 
     it('stores the records in the list of all records', () => {
       expect(store.records.length).toEqual(3);
+    });
+  });
+
+  describe('related', () => {
+    const parent = {
+      type: 'users',
+      id: '42',
+    };
+
+    beforeEach(() => {
+      store.storeRecords([
+        {
+          type: 'widgets',
+          id: '1',
+          attributes: {
+            title: 'Non-Matching',
+          },
+        },
+      ]);
+      api.get.mockResolvedValue({
+        data: {
+          data: [
+            {
+              type: 'widget',
+              id: '2',
+              attributes: {
+                title: 'Foo',
+              },
+            },
+            {
+              type: 'widget',
+              id: '3',
+              attributes: {
+                title: 'Bar',
+              },
+            },
+          ],
+        },
+      });
+
+      return store.loadRelated({ parent, options: includeOptions });
+    });
+
+    it('returns the related records', () => {
+      const records = store.related({ parent });
+      expect(records.length).toEqual(2);
+
+      const firstRecord = records[0];
+      expect(firstRecord.id).toEqual('2');
+      expect(firstRecord.attributes.title).toEqual('Foo');
     });
   });
 

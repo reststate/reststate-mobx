@@ -24,6 +24,7 @@ class ResourceStore {
     this.client = new ResourceClient({ name, httpClient });
     this.records = observable([]);
     this.filtered = observable([]);
+    this.relatedRecords = observable([]);
   }
 
   storeRecords(records) {
@@ -95,9 +96,24 @@ class ResourceStore {
           new Resource({ record, client: this.client })
         ))
       ))
-      .then(resources => (
-        resources.map(storeRecord(this.records))
-      ));
+      .then(resources => {
+        const { id, type } = parent;
+        const relatedIds = resources.map(record => record.id);
+        this.relatedRecords.push({ id, type, relatedIds });
+        return resources.map(storeRecord(this.records));
+      });
+  }
+
+  related({ parent }) {
+    const { type, id } = parent;
+    const related = this.relatedRecords.find(matches({ type, id }));
+
+    if (!related) {
+      return [];
+    }
+
+    const ids = related.relatedIds;
+    return this.records.filter(record => ids.includes(record.id));
   }
 
   create(partialRecord) {
