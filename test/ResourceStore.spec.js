@@ -27,6 +27,8 @@ describe('ResourceStore', () => {
       },
     ];
 
+    let resolvedRecords;
+
     beforeEach(() => {
       api.get.mockResolvedValue({
         data: {
@@ -37,11 +39,18 @@ describe('ResourceStore', () => {
 
     describe('when passing no options', () => {
       beforeEach(() => {
-        return store.loadAll();
+        return store.loadAll()
+          .then(records => resolvedRecords = records);
       });
 
       it('makes the correct API call', () => {
         expect(api.get).toHaveBeenCalledWith('widgets?');
+      });
+
+      it('resolves to the records', () => {
+        expect(resolvedRecords.length).toEqual(1);
+        const record = resolvedRecords[0];
+        expect(record.id).toEqual('1');
       });
 
       it('makes records available via all()', () => {
@@ -74,6 +83,8 @@ describe('ResourceStore', () => {
         },
       };
 
+      let resolvedRecord;
+
       beforeEach(() => {
         store.storeRecords([
           {
@@ -88,11 +99,16 @@ describe('ResourceStore', () => {
           },
         });
 
-        return store.loadById({ id, options: includeOptions });
+        return store.loadById({ id, options: includeOptions })
+          .then(record => resolvedRecord = record);
       });
 
       it('calls the right API method', () => {
         expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
+      });
+
+      it('resolves to the correct record', () => {
+        expect(resolvedRecord.attributes.title).toEqual('New Title');
       });
 
       it('makes the record available via byId()', () => {
@@ -111,6 +127,8 @@ describe('ResourceStore', () => {
         },
       };
 
+      let resolvedRecord;
+
       beforeEach(() => {
         store.storeRecords([
           {
@@ -128,11 +146,16 @@ describe('ResourceStore', () => {
           },
         });
 
-        return store.loadById({ id, options: includeOptions });
+        return store.loadById({ id, options: includeOptions })
+          .then(record => resolvedRecord = record);
       });
 
       it('calls the right API method', () => {
         expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
+      });
+
+      it('resolves to the right record', () => {
+        expect(resolvedRecord.attributes.title).toEqual('New Title');
       });
 
       it('makes the record available via byId()', () => {
@@ -285,6 +308,8 @@ describe('ResourceStore', () => {
       },
     };
 
+    let resolvedRecord;
+
     beforeEach(() => {
       api.post.mockResolvedValue({
         data: {
@@ -295,7 +320,8 @@ describe('ResourceStore', () => {
           },
         },
       });
-      return store.create(widget);
+      return store.create(widget)
+        .then(record => resolvedRecord = record);
     });
 
     it('sends the request to the server', () => {
@@ -308,13 +334,14 @@ describe('ResourceStore', () => {
       expect(api.post).toHaveBeenCalledWith('widgets', expectedBody);
     });
 
-    it('stores the record to the list', () => {
-      const { records } = store;
-      expect(records.length).toEqual(1);
+    it('resolves to the returned record', () => {
+      expect(resolvedRecord.id).toEqual('27');
+      expect(resolvedRecord.attributes.title).toEqual('Baz');
+    });
 
-      const firstRecord = records[0];
-      expect(firstRecord.id).toEqual('27');
-      expect(firstRecord.attributes.title).toEqual('Baz');
+    it('makes the record available via byId()', () => {
+      const foundRecord = store.byId({ id: '27' });
+      expect(foundRecord.attributes.title).toEqual('Baz');
     });
   });
 });
