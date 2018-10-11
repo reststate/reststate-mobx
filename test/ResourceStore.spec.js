@@ -200,11 +200,7 @@ describe('ResourceStore', () => {
       expect(firstRecord.attributes.title).toEqual('Foo');
     });
 
-    it('stores the records in the list of all records', () => {
-      expect(store.records.length).toEqual(3);
-    });
-
-    it('makes the results available via filter()', () => {
+    it('makes the results available via where()', () => {
       const records = store.where({ filter });
       expect(records.length).toEqual(2);
 
@@ -270,10 +266,6 @@ describe('ResourceStore', () => {
       const firstRecord = resolvedRecords[0];
       expect(firstRecord.id).toEqual('2');
       expect(firstRecord.attributes.title).toEqual('Foo');
-    });
-
-    it('stores the records in the list of all records', () => {
-      expect(store.records.length).toEqual(3);
     });
 
     it('makes the records accessible via related()', () => {
