@@ -44,9 +44,11 @@ describe('ResourceStore', () => {
         expect(api.get).toHaveBeenCalledWith('widgets?');
       });
 
-      it('loads records via the client', () => {
-        expect(store.records.length).toEqual(1);
-        const record = store.records[0];
+      it('makes records available via all()', () => {
+        const records = store.all();
+
+        expect(records.length).toEqual(1);
+        const record = records[0];
         expect(record.id).toEqual('1');
       });
     });
@@ -58,28 +60,6 @@ describe('ResourceStore', () => {
             expect(api.get).toHaveBeenCalledWith('widgets?include=customers');
           });
       });
-    });
-  });
-
-  describe('all', () => {
-    it('returns all records currently in the store', () => {
-      const records = [
-        {
-          type: 'widgets',
-          id: '27',
-        },
-        {
-          type: 'widgets',
-          id: '42',
-        },
-      ]
-      store.storeRecords(records);
-
-      const result = store.all();
-
-      expect(result.length).toEqual(2);
-      const record = result[0];
-      expect(record.id).toEqual('27');
     });
   });
 
