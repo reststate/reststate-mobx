@@ -69,8 +69,7 @@ class ResourceStore {
         ))
       ))
       .then(resources => {
-        const ids = resources.map(({ id }) => id);
-        this.filtered.push({ filter, ids });
+        this.filtered.push({ filter, resources });
         return resources.map(storeRecord(this.records))
       });
   }
@@ -85,8 +84,7 @@ class ResourceStore {
       return [];
     }
 
-    const { ids } = entry;
-    return this.records.filter(record => ids.includes(record.id));
+    return entry.resources;
   }
 
   loadRelated({ parent, options } = {}) {
@@ -98,8 +96,7 @@ class ResourceStore {
       ))
       .then(resources => {
         const { id, type } = parent;
-        const relatedIds = resources.map(record => record.id);
-        this.relatedRecords.push({ id, type, relatedIds });
+        this.relatedRecords.push({ id, type, resources });
         return resources.map(storeRecord(this.records));
       });
   }
@@ -112,8 +109,7 @@ class ResourceStore {
       return [];
     }
 
-    const ids = related.relatedIds;
-    return this.records.filter(record => ids.includes(record.id));
+    return related.resources;
   }
 
   create(partialRecord) {
