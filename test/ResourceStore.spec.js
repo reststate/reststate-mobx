@@ -20,39 +20,44 @@ describe('ResourceStore', () => {
   });
 
   describe('loadAll', () => {
-    it('loads records via the client', () => {
-      const records = [
-        {
-          type: 'widgets',
-          id: '1',
-        },
-      ];
+    const records = [
+      {
+        type: 'widgets',
+        id: '1',
+      },
+    ];
+
+    beforeEach(() => {
       api.get.mockResolvedValue({
         data: {
           data: records,
         },
       });
-
-      return store.loadAll()
-        .then(() => {
-          expect(store.records.length).toEqual(1);
-          const record = store.records[0];
-          expect(record.id).toEqual('1');
-        });
     });
 
-    it('allows including related records', () => {
-      const records = [];
-      api.get.mockResolvedValue({
-        data: {
-          data: records,
-        },
+    describe('when passing no options', () => {
+      beforeEach(() => {
+        return store.loadAll();
       });
 
-      return store.loadAll({ options: includeOptions })
-        .then(() => {
-          expect(api.get).toHaveBeenCalledWith('widgets?include=customers');
-        });
+      it('makes the correct API call', () => {
+        expect(api.get).toHaveBeenCalledWith('widgets?');
+      });
+
+      it('loads records via the client', () => {
+        expect(store.records.length).toEqual(1);
+        const record = store.records[0];
+        expect(record.id).toEqual('1');
+      });
+    });
+
+    describe('when passing an include option', () => {
+      it('makes the correct API call', () => {
+        return store.loadAll({ options: includeOptions })
+          .then(() => {
+            expect(api.get).toHaveBeenCalledWith('widgets?include=customers');
+          });
+      });
     });
   });
 
