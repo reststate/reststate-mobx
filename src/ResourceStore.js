@@ -6,8 +6,10 @@ const storeRecord = (records) => (newRecord) => {
   const existingRecord = records.find(r => r.id === newRecord.id);
   if (existingRecord) {
     Object.assign(existingRecord, newRecord);
+    return existingRecord;
   } else {
     records.push(newRecord);
+    return newRecord;
   }
 };
 
@@ -25,46 +27,46 @@ class ResourceStore {
 
   loadAll({ options } = {}) {
     return this.client.all({ options })
-      .then(response => {
-        return response.data.map(record => (
+      .then(response => (
+        response.data.map(record => (
           new Resource({ record, client: this.client })
-        ));
-      })
-      .then(records => {
-        records.forEach(storeRecord(this.records));
-        return records;
-      });
+        ))
+      ))
+      .then(records => (
+        records.map(storeRecord(this.records))
+      ));
   }
 
   loadById({ id, options }) {
     return this.client.find({ id, options })
+      .then(response => (
+        new Resource({ record: response.data, client: this.client })
+      ))
       .then(storeRecord(this.records));
   }
 
   loadWhere({ filter, options } = {}) {
     return this.client.where({ filter, options })
-      .then(records => {
-        return records.map(record => (
+      .then(response => (
+        response.data.map(record => (
           new Resource({ record, client: this.client })
-        ));
-      })
-      .then(resources => {
-        resources.forEach(storeRecord(this.records));
-        return resources;
-      });
+        ))
+      ))
+      .then(resources => (
+        resources.map(storeRecord(this.records))
+      ));
   }
 
   loadRelated({ parent, options } = {}) {
     return this.client.related({ parent, options })
-      .then(records => {
-        return records.map(record => (
+      .then(response => (
+        response.data.map(record => (
           new Resource({ record, client: this.client })
-        ));
-      })
-      .then(resources => {
-        resources.forEach(storeRecord(this.records));
-        return resources;
-      });
+        ))
+      ))
+      .then(resources => (
+        resources.map(storeRecord(this.records))
+      ));
   }
 
   create(partialRecord) {

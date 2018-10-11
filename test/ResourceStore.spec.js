@@ -27,7 +27,11 @@ describe('ResourceStore', () => {
           id: '1',
         },
       ];
-      api.get.mockResolvedValue({ data: records });
+      api.get.mockResolvedValue({
+        data: {
+          data: records,
+        },
+      });
 
       return store.loadAll()
         .then(() => {
@@ -39,7 +43,11 @@ describe('ResourceStore', () => {
 
     it('allows including related records', () => {
       const records = [];
-      api.get.mockResolvedValue({ data: records });
+      api.get.mockResolvedValue({
+        data: {
+          data: records,
+        },
+      });
 
       return store.loadAll({ options: includeOptions })
         .then(() => {
@@ -68,7 +76,11 @@ describe('ResourceStore', () => {
             title: 'New Title',
           },
         };
-        api.get.mockResolvedValue({ data: record });
+        api.get.mockResolvedValue({
+          data: {
+            data: record,
+          },
+        });
         return store.loadById({ id, options: includeOptions })
           .then(() => {
             expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
@@ -104,7 +116,11 @@ describe('ResourceStore', () => {
             title: 'New Title',
           },
         };
-        api.get.mockResolvedValue({ data: record });
+        api.get.mockResolvedValue({
+          data: {
+            data: record,
+          },
+        });
         return store.loadById({ id, options: includeOptions })
           .then(() => {
             expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
@@ -133,22 +149,24 @@ describe('ResourceStore', () => {
         },
       ]);
       api.get.mockResolvedValue({
-        data: [
-          {
-            type: 'widget',
-            id: '2',
-            attributes: {
-              title: 'Foo',
+        data: {
+          data: [
+            {
+              type: 'widget',
+              id: '2',
+              attributes: {
+                title: 'Foo',
+              },
             },
-          },
-          {
-            type: 'widget',
-            id: '3',
-            attributes: {
-              title: 'Bar',
+            {
+              type: 'widget',
+              id: '3',
+              attributes: {
+                title: 'Bar',
+              },
             },
-          },
-        ],
+          ],
+        },
       });
 
       const filter = {
@@ -198,22 +216,24 @@ describe('ResourceStore', () => {
         },
       ]);
       api.get.mockResolvedValue({
-        data: [
-          {
-            type: 'widget',
-            id: '2',
-            attributes: {
-              title: 'Foo',
+        data: {
+          data: [
+            {
+              type: 'widget',
+              id: '2',
+              attributes: {
+                title: 'Foo',
+              },
             },
-          },
-          {
-            type: 'widget',
-            id: '3',
-            attributes: {
-              title: 'Bar',
+            {
+              type: 'widget',
+              id: '3',
+              attributes: {
+                title: 'Bar',
+              },
             },
-          },
-        ],
+          ],
+        },
       });
 
       return store.loadRelated({ parent, options: includeOptions })
