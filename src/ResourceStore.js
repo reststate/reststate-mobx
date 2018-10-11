@@ -49,6 +49,10 @@ class ResourceStore {
       .then(storeRecord(this.records));
   }
 
+  byId({ id }) {
+    return this.records.find(record => record.id === id);
+  }
+
   loadWhere({ filter, options } = {}) {
     return this.client.where({ filter, options })
       .then(response => (

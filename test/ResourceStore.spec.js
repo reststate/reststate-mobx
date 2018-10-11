@@ -157,6 +157,40 @@ describe('ResourceStore', () => {
     });
   });
 
+  describe('byId', () => {
+    it('retrieves the record when present', () => {
+      const matchingRecord = {
+        type: 'widgets',
+        id: '2',
+        attributes: {
+          title: 'Matching',
+        },
+      };
+      store.storeRecords([
+        {
+          type: 'widgets',
+          id: '1',
+        },
+        matchingRecord,
+      ]);
+
+      const result = store.byId({ id: '2' });
+      expect(result.attributes.title).toEqual('Matching');
+    });
+
+    it('returns undefined when not present', () => {
+      store.storeRecords([
+        {
+          type: 'widgets',
+          id: '1',
+        },
+      ]);
+
+      const result = store.byId({ id: '2' });
+      expect(result).toEqual(undefined);
+    });
+  });
+
   describe('loadWhere', () => {
     let resolvedRecords;
 
