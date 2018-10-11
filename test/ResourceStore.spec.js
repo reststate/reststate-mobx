@@ -80,6 +80,15 @@ describe('ResourceStore', () => {
 
   describe('loadById', () => {
     describe('when the record is not yet present in the store', () => {
+      const id = '42';
+      const record = {
+        type: 'widgets',
+        id,
+        attributes: {
+          title: 'New Title',
+        },
+      };
+
       beforeEach(() => {
         store.storeRecords([
           {
@@ -87,36 +96,39 @@ describe('ResourceStore', () => {
             id: '27',
           },
         ]);
-      });
 
-      it('adds the record to the list of all records', () => {
-        const id = '42';
-        const record = {
-          type: 'widgets',
-          id,
-          attributes: {
-            title: 'New Title',
-          },
-        };
         api.get.mockResolvedValue({
           data: {
             data: record,
           },
         });
-        return store.loadById({ id, options: includeOptions })
-          .then(() => {
-            expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
 
-            const { records } = store;
-            expect(records.length).toEqual(2);
+        return store.loadById({ id, options: includeOptions });
+      });
 
-            const storedRecord = records.find(r => r.id === id);
-            expect(storedRecord.attributes.title).toEqual('New Title');
-          });
+      it('calls the right API method', () => {
+        expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
+      });
+
+      it('adds the record to the list of all records', () => {
+        const { records } = store;
+        expect(records.length).toEqual(2);
+
+        const storedRecord = records.find(r => r.id === id);
+        expect(storedRecord.attributes.title).toEqual('New Title');
       });
     });
 
     describe('when the record is already present in the store', () => {
+      const id = '42';
+      const record = {
+        type: 'widgets',
+        id,
+        attributes: {
+          title: 'New Title',
+        },
+      };
+
       beforeEach(() => {
         store.storeRecords([
           {
@@ -127,32 +139,26 @@ describe('ResourceStore', () => {
             },
           },
         ]);
-      });
 
-      it('adds the record to the list of all records', () => {
-        const id = '42';
-        const record = {
-          type: 'widgets',
-          id,
-          attributes: {
-            title: 'New Title',
-          },
-        };
         api.get.mockResolvedValue({
           data: {
             data: record,
           },
         });
-        return store.loadById({ id, options: includeOptions })
-          .then(() => {
-            expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
 
-            const { records } = store;
-            expect(records.length).toEqual(1);
+        return store.loadById({ id, options: includeOptions });
+      });
 
-            const storedRecord = records[0];
-            expect(storedRecord.attributes.title).toEqual('New Title');
-          });
+      it('calls the right API method', () => {
+        expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
+      });
+
+      it('adds the record to the list of all records', () => {
+        const { records } = store;
+        expect(records.length).toEqual(1);
+
+        const storedRecord = records[0];
+        expect(storedRecord.attributes.title).toEqual('New Title');
       });
     });
   });
