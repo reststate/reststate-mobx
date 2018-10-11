@@ -254,6 +254,57 @@ describe('ResourceStore', () => {
     });
   });
 
+  describe('where', () => {
+    const filter = {
+      status: 'draft',
+    };
+
+    const matchingRecords = [
+      {
+        type: 'widget',
+        id: '2',
+        attributes: {
+          title: 'Foo',
+        },
+      },
+      {
+        type: 'widget',
+        id: '3',
+        attributes: {
+          title: 'Bar',
+        },
+      },
+    ];
+
+    beforeEach(() => {
+      store.storeRecords([
+        {
+          type: 'widgets',
+          id: '1',
+          attributes: {
+            title: 'Non-Matching',
+          },
+        },
+      ]);
+      api.get.mockResolvedValue({
+        data: {
+          data: matchingRecords,
+        },
+      });
+
+      return store.loadWhere({ filter });
+    });
+
+    it('resolves to the results by filter', () => {
+      const records = store.where({ filter });
+      expect(records.length).toEqual(2);
+
+      const firstRecord = records[0];
+      expect(firstRecord.id).toEqual('2');
+      expect(firstRecord.attributes.title).toEqual('Foo');
+    });
+  });
+
   describe('loadRelated', () => {
     const parent = {
       type: 'users',

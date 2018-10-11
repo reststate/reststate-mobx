@@ -13,10 +13,17 @@ const storeRecord = (records) => (newRecord) => {
   }
 };
 
+const matches = (criteria) => (test) => (
+  Object.keys(criteria).every(key => (
+    criteria[key] === test[key]
+  ))
+);
+
 class ResourceStore {
   constructor({ name, httpClient }) {
     this.client = new ResourceClient({ name, httpClient });
     this.records = observable([]);
+    this.filtered = observable([]);
   }
 
   storeRecords(records) {
@@ -60,9 +67,25 @@ class ResourceStore {
           new Resource({ record, client: this.client })
         ))
       ))
-      .then(resources => (
-        resources.map(storeRecord(this.records))
-      ));
+      .then(resources => {
+        const ids = resources.map(({ id }) => id);
+        this.filtered.push({ filter, ids });
+        return resources.map(storeRecord(this.records))
+      });
+  }
+
+  where({ filter }) {
+    const matchesRequestedFilter = matches(filter);
+    const entry = this.filtered.find(({ filter: testFilter }) => (
+      matchesRequestedFilter(testFilter)
+    ));
+
+    if (!entry) {
+      return [];
+    }
+
+    const { ids } = entry;
+    return this.records.filter(record => ids.includes(record.id));
   }
 
   loadRelated({ parent, options } = {}) {
