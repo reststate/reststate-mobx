@@ -95,11 +95,8 @@ describe('ResourceStore', () => {
         expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
       });
 
-      it('adds the record to the list of all records', () => {
-        const { records } = store;
-        expect(records.length).toEqual(2);
-
-        const storedRecord = records.find(r => r.id === id);
+      it('makes the record available via byId()', () => {
+        const storedRecord = store.byId({ id });
         expect(storedRecord.attributes.title).toEqual('New Title');
       });
     });
@@ -138,47 +135,10 @@ describe('ResourceStore', () => {
         expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
       });
 
-      it('adds the record to the list of all records', () => {
-        const { records } = store;
-        expect(records.length).toEqual(1);
-
-        const storedRecord = records[0];
+      it('makes the record available via byId()', () => {
+        const storedRecord = store.byId({ id });
         expect(storedRecord.attributes.title).toEqual('New Title');
       });
-    });
-  });
-
-  describe('byId', () => {
-    it('retrieves the record when present', () => {
-      const matchingRecord = {
-        type: 'widgets',
-        id: '2',
-        attributes: {
-          title: 'Matching',
-        },
-      };
-      store.storeRecords([
-        {
-          type: 'widgets',
-          id: '1',
-        },
-        matchingRecord,
-      ]);
-
-      const result = store.byId({ id: '2' });
-      expect(result.attributes.title).toEqual('Matching');
-    });
-
-    it('returns undefined when not present', () => {
-      store.storeRecords([
-        {
-          type: 'widgets',
-          id: '1',
-        },
-      ]);
-
-      const result = store.byId({ id: '2' });
-      expect(result).toEqual(undefined);
     });
   });
 
