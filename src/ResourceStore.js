@@ -37,6 +37,10 @@ class ResourceStore {
       ));
   }
 
+  all() {
+    return this.records;
+  }
+
   loadById({ id, options }) {
     return this.client.find({ id, options })
       .then(response => (

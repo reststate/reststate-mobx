@@ -56,6 +56,28 @@ describe('ResourceStore', () => {
     });
   });
 
+  describe('all', () => {
+    it('returns all records currently in the store', () => {
+      const records = [
+        {
+          type: 'widgets',
+          id: '27',
+        },
+        {
+          type: 'widgets',
+          id: '42',
+        },
+      ]
+      store.storeRecords(records);
+
+      const result = store.all();
+
+      expect(result.length).toEqual(2);
+      const record = result[0];
+      expect(record.id).toEqual('27');
+    });
+  });
+
   describe('loadById', () => {
     describe('when the record is not yet present in the store', () => {
       beforeEach(() => {
