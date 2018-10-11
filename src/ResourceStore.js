@@ -1,5 +1,6 @@
-import { ResourceClient } from 'jsonapi-client';
-import Resource from './Resource';
+const { observable } = require('mobx');
+const { ResourceClient } = require('jsonapi-client');
+const Resource = require('./Resource');
 
 const storeRecord = (records) => (newRecord) => {
   const existingRecord = records.find(r => r.id === newRecord.id);
@@ -10,11 +11,10 @@ const storeRecord = (records) => (newRecord) => {
   }
 };
 
-export default class ResourceStore {
-  records = []
-
+class ResourceStore {
   constructor({ name, httpClient }) {
     this.client = new ResourceClient({ name, httpClient });
+    this.records = observable([]);
   }
 
   storeRecords(records) {
@@ -25,7 +25,15 @@ export default class ResourceStore {
 
   loadAll({ options } = {}) {
     return this.client.all({ options })
-      .then(records => records.forEach(storeRecord(this.records)));
+      .then(response => {
+        return response.data.map(record => (
+          new Resource({ record, client: this.client })
+        ));
+      })
+      .then(records => {
+        records.forEach(storeRecord(this.records));
+        return records;
+      });
   }
 
   loadById({ id, options }) {
@@ -65,3 +73,5 @@ export default class ResourceStore {
       .then(storeRecord(this.records));
   }
 }
+
+module.exports = ResourceStore;

@@ -1,4 +1,4 @@
-export default class Resource {
+class Resource {
   constructor({ record, client }) {
     this.client = client;
     Object.assign(this, record);
@@ -13,3 +13,5 @@ export default class Resource {
     return this.client.delete({ id: this.id });
   }
 }
+
+module.exports = Resource;
