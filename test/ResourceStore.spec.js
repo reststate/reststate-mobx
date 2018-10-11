@@ -192,6 +192,10 @@ describe('ResourceStore', () => {
   });
 
   describe('loadWhere', () => {
+    const filter = {
+      status: 'draft',
+    };
+
     let resolvedRecords;
 
     beforeEach(() => {
@@ -225,10 +229,6 @@ describe('ResourceStore', () => {
         },
       });
 
-      const filter = {
-        status: 'draft',
-      };
-
       return store.loadWhere({ filter, options: includeOptions })
         .then(response => {
           resolvedRecords = response;
@@ -252,50 +252,8 @@ describe('ResourceStore', () => {
     it('stores the records in the list of all records', () => {
       expect(store.records.length).toEqual(3);
     });
-  });
 
-  describe('where', () => {
-    const filter = {
-      status: 'draft',
-    };
-
-    const matchingRecords = [
-      {
-        type: 'widget',
-        id: '2',
-        attributes: {
-          title: 'Foo',
-        },
-      },
-      {
-        type: 'widget',
-        id: '3',
-        attributes: {
-          title: 'Bar',
-        },
-      },
-    ];
-
-    beforeEach(() => {
-      store.storeRecords([
-        {
-          type: 'widgets',
-          id: '1',
-          attributes: {
-            title: 'Non-Matching',
-          },
-        },
-      ]);
-      api.get.mockResolvedValue({
-        data: {
-          data: matchingRecords,
-        },
-      });
-
-      return store.loadWhere({ filter });
-    });
-
-    it('returns the results by filter', () => {
+    it('makes the results available via filter()', () => {
       const records = store.where({ filter });
       expect(records.length).toEqual(2);
 
@@ -366,49 +324,8 @@ describe('ResourceStore', () => {
     it('stores the records in the list of all records', () => {
       expect(store.records.length).toEqual(3);
     });
-  });
 
-  describe('related', () => {
-    const parent = {
-      type: 'users',
-      id: '42',
-    };
-
-    beforeEach(() => {
-      store.storeRecords([
-        {
-          type: 'widgets',
-          id: '1',
-          attributes: {
-            title: 'Non-Matching',
-          },
-        },
-      ]);
-      api.get.mockResolvedValue({
-        data: {
-          data: [
-            {
-              type: 'widget',
-              id: '2',
-              attributes: {
-                title: 'Foo',
-              },
-            },
-            {
-              type: 'widget',
-              id: '3',
-              attributes: {
-                title: 'Bar',
-              },
-            },
-          ],
-        },
-      });
-
-      return store.loadRelated({ parent, options: includeOptions });
-    });
-
-    it('returns the related records', () => {
+    it('makes the records accessible via related()', () => {
       const records = store.related({ parent });
       expect(records.length).toEqual(2);
 
