@@ -70,7 +70,7 @@ class ResourceStore {
       ))
       .then(resources => {
         this.filtered.push({ filter, resources });
-        return resources.map(storeRecord(this.records))
+        return resources.map(storeRecord(this.records));
       });
   }
 
