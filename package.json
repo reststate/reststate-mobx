@@ -1,5 +1,5 @@
 {
-  "name": "mobx-jsonapi",
+  "name": "@reststate/mobx",
   "version": "0.0.1",
   "description": "A JSON API client and store layer for MobX",
   "main": "index.js",
@@ -7,6 +7,9 @@
   "license": "Apache-2.0",
   "scripts": {
     "test": "jest"
+  },
+  "dependencies": {
+    "@reststate/client": "^0.0.1"
   },
   "peerDependencies": {
     "mobx": "^5.5.0"

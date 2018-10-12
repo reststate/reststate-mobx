@@ -1,13 +1,13 @@
-# mobx-jsonapi
+# @reststate/mobx
 
-`mobx-jsonapi`, unsurprisingly, allows you to access data from a [JSON API](http://jsonapi.org/) web service via [MobX](https://mobx.js.org/) objects. Because of JSON API's strong conventions, in most cases all you should need to do is tell `mobx-jsonapi` the base URL of your web service, and which resources to access, and you should be set. No manual web request juggling!
+`@reststate/mobx`, unsurprisingly, allows you to access data from a [JSON API](http://jsonapi.org/) web service via [MobX](https://mobx.js.org/) objects. Because of JSON API's strong conventions, in most cases all you should need to do is tell `@reststate/mobx` the base URL of your web service, and which resources to access, and you should be set. No manual web request juggling!
 
 This is a very early proof-of-concept, so THERE IS NO ERROR HANDLING YET, and many features of JSON API are not yet supported. Open a GitHub issue with any other features you'd like to see!
 
 ## Installation
 
 ```
-# npm install --save mobx-jsonapi
+# npm install --save @reststate/mobx
 ```
 
 ## Setup
@@ -15,7 +15,7 @@ This is a very early proof-of-concept, so THERE IS NO ERROR HANDLING YET, and ma
 To create a MobX object corresponding to a resource on the server, create a `new ResourceStore()`:
 
 ```javascript
-import { ResourceStore } from 'mobx-jsonapi';
+import { ResourceStore } from '@reststate/mobx';
 import api from './api';
 
 const store = new ResourceStore({

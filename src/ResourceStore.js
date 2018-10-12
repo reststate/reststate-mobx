@@ -1,5 +1,5 @@
 const { observable } = require('mobx');
-const { ResourceClient } = require('jsonapi-client');
+const { ResourceClient } = require('@reststate/client');
 const Resource = require('./Resource');
 
 const storeRecord = (records) => (newRecord) => {

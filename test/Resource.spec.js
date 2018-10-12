@@ -1,5 +1,5 @@
 import Resource from '../src/Resource';
-import { ResourceClient } from 'jsonapi-client';
+import { ResourceClient } from '@reststate/client';
 
 describe('Resource', () => {
   let api;
