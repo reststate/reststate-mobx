@@ -361,40 +361,73 @@ describe('ResourceStore', () => {
       },
     };
 
-    let resolvedRecord;
+    describe('success', () => {
+      let resolvedRecord;
 
-    beforeEach(() => {
-      api.post.mockResolvedValue({
-        data: {
+      beforeEach(() => {
+        api.post.mockResolvedValue({
           data: {
-            type: 'widget',
-            id: '27',
+            data: {
+              type: 'widget',
+              id: '27',
+              attributes: widget.attributes,
+            },
+          },
+        });
+        return store.create(widget)
+          .then(record => resolvedRecord = record);
+      });
+
+      it('sends the request to the server', () => {
+        const expectedBody = {
+          data: {
+            type: 'widgets',
             attributes: widget.attributes,
           },
-        },
+        };
+        expect(api.post).toHaveBeenCalledWith('widgets', expectedBody);
       });
-      return store.create(widget)
-        .then(record => resolvedRecord = record);
+
+      it('resolves to the returned record', () => {
+        expect(resolvedRecord.id).toEqual('27');
+        expect(resolvedRecord.attributes.title).toEqual('Baz');
+      });
+
+      it('makes the record available via byId()', () => {
+        const foundRecord = store.byId({ id: '27' });
+        expect(foundRecord.attributes.title).toEqual('Baz');
+      });
     });
 
-    it('sends the request to the server', () => {
-      const expectedBody = {
-        data: {
-          type: 'widgets',
-          attributes: widget.attributes,
+    describe('error', () => {
+      const errors = [
+        {
+          title: "can't be blank",
+          detail: "title - can't be blank",
+          code: '100',
+          source: {
+            pointer: '/data/attributes/title',
+          },
+          status: '422',
         },
-      };
-      expect(api.post).toHaveBeenCalledWith('widgets', expectedBody);
-    });
+      ];
 
-    it('resolves to the returned record', () => {
-      expect(resolvedRecord.id).toEqual('27');
-      expect(resolvedRecord.attributes.title).toEqual('Baz');
-    });
+      let response;
 
-    it('makes the record available via byId()', () => {
-      const foundRecord = store.byId({ id: '27' });
-      expect(foundRecord.attributes.title).toEqual('Baz');
+      beforeEach(() => {
+        api.post.mockRejectedValue({ data: { errors } });
+        response = store.create(widget);
+      });
+
+      it('rejects with the response body', () => {
+        expect(response).rejects.toEqual(errors);
+      });
+
+      it('sets the error flag', () => {
+        response.catch(() => {
+          expect(store.error).toEqual(true);
+        });
+      });
     });
   });
 });

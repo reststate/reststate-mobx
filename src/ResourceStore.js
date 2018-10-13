@@ -133,7 +133,11 @@ class ResourceStore {
   create(partialRecord) {
     return this.client.create(partialRecord)
       .then(response => response.data)
-      .then(storeRecord(this.records));
+      .then(storeRecord(this.records))
+      .catch(response => {
+        this._error.set(true);
+        throw response.errors;
+      });
   }
 }
 
