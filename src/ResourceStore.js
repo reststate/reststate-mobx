@@ -113,6 +113,9 @@ class ResourceStore {
         const { id, type } = parent;
         this.relatedRecords.push({ id, type, resources });
         return resources.map(storeRecord(this.records));
+      })
+      .catch(error => {
+        this._error.set(true);
       });
   }
 
