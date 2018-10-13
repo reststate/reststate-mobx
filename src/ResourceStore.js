@@ -22,10 +22,15 @@ const matches = (criteria) => (test) => (
 class ResourceStore {
   constructor({ name, httpClient }) {
     this.client = new ResourceClient({ name, httpClient });
+    this._loading = observable.box(false);
     this._error = observable.box(false);
     this.records = observable([]);
     this.filtered = observable([]);
     this.relatedRecords = observable([]);
+  }
+
+  get loading() {
+    return this._loading.get();
   }
 
   get error() {
@@ -40,16 +45,19 @@ class ResourceStore {
 
   loadAll({ options } = {}) {
     this._error.set(false);
+    this._loading.set(true);
     return this.client.all({ options })
-      .then(response => (
-        response.data.map(record => (
+      .then(response => {
+        this._loading.set(false);
+        return response.data.map(record => (
           new Resource({ record, client: this.client })
-        ))
-      ))
+        ));
+      })
       .then(records => (
         records.map(storeRecord(this.records))
       ))
       .catch(error => {
+        this._loading.set(false);
         this._error.set(true);
       });
   }

@@ -28,6 +28,7 @@ describe('ResourceStore', () => {
         },
       ];
 
+      let promise;
       let resolvedRecords;
 
       beforeEach(() => {
@@ -38,6 +39,11 @@ describe('ResourceStore', () => {
         });
       });
 
+      it('sets loading to true while loading', () => {
+        const promise = store.loadAll();
+        expect(store.loading).toEqual(true);
+      });
+
       describe('when passing no options', () => {
         beforeEach(() => {
           return store.loadAll()
@@ -46,6 +52,10 @@ describe('ResourceStore', () => {
 
         it('makes the correct API call', () => {
           expect(api.get).toHaveBeenCalledWith('widgets?');
+        });
+
+        it('sets loading to false when done', () => {
+          expect(store.loading).toEqual(false);
         });
 
         it('resolves to the records', () => {
@@ -77,6 +87,10 @@ describe('ResourceStore', () => {
       beforeEach(() => {
         api.get.mockRejectedValue();
         return store.loadAll();
+      });
+
+      it('sets loading to false when done', () => {
+        expect(store.loading).toEqual(false);
       });
 
       it('sets the error flag', () => {
