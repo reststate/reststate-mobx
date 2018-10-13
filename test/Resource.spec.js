@@ -26,39 +26,84 @@ describe('Resource', () => {
       },
     };
 
-    beforeEach(() => {
-      resource = new Resource({
-        client,
-        record: {
-          type: 'widgets',
-          id: '42',
-          attributes: {
-            title: 'Old Title',
+    describe('success', () => {
+      beforeEach(() => {
+        resource = new Resource({
+          client,
+          record: {
+            type: 'widgets',
+            id: '42',
+            attributes: {
+              title: 'Old Title',
+            },
           },
-        },
+        });
+
+        api.patch.mockResolvedValue({
+          data: {
+            data: expectedRecord,
+          },
+        });
+
+        resource.attributes.title = 'New Title';
+
+        return resource.save();
       });
 
-      api.patch.mockResolvedValue({
-        data: {
-          data: expectedRecord,
-        },
+      it('sends the correct API request', () => {
+        expect(api.patch).toHaveBeenCalledWith(
+          'widgets/42',
+          {
+            data: {
+              ...expectedRecord,
+              relationships: undefined,
+            },
+          },
+        );
       });
-
-      resource.attributes.title = 'New Title';
-
-      return resource.save();
     });
 
-    it('sends the correct API request', () => {
-      expect(api.patch).toHaveBeenCalledWith(
-        'widgets/42',
+    describe('error', () => {
+      const errors = [
         {
-          data: {
-            ...expectedRecord,
-            relationships: undefined,
+          title: "can't be blank",
+          detail: "title - can't be blank",
+          code: '100',
+          source: {
+            pointer: '/data/attributes/title',
           },
+          status: '422',
         },
-      );
+      ];
+
+      let resource;
+      let response;
+
+      beforeEach(() => {
+        resource = new Resource({
+          client,
+          record: {
+            type: 'widgets',
+            id: '42',
+            attributes: {
+              title: 'Old Title',
+            },
+          },
+        });
+
+        api.patch.mockRejectedValue({ data: { errors } });
+        response = resource.save();
+      });
+
+      it('rejects with the response body', () => {
+        expect(response).rejects.toEqual(errors);
+      });
+
+      it('sets the error flag on the resource', () => {
+        response.catch(() => {
+          expect(resource.error).toEqual(true);
+        });
+      });
     });
   });
 
