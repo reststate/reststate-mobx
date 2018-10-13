@@ -86,94 +86,107 @@ describe('ResourceStore', () => {
   });
 
   describe('loadById', () => {
-    describe('when the record is not yet present in the store', () => {
-      const id = '42';
-      const record = {
-        type: 'widgets',
-        id,
-        attributes: {
-          title: 'New Title',
-        },
-      };
-
-      let resolvedRecord;
-
-      beforeEach(() => {
-        store.storeRecords([
-          {
-            type: 'widgets',
-            id: '27',
+    describe('success', () => {
+      describe('when the record is not yet present in the store', () => {
+        const id = '42';
+        const record = {
+          type: 'widgets',
+          id,
+          attributes: {
+            title: 'New Title',
           },
-        ]);
+        };
 
-        api.get.mockResolvedValue({
-          data: {
-            data: record,
-          },
+        let resolvedRecord;
+
+        beforeEach(() => {
+          store.storeRecords([
+            {
+              type: 'widgets',
+              id: '27',
+            },
+          ]);
+
+          api.get.mockResolvedValue({
+            data: {
+              data: record,
+            },
+          });
+
+          return store.loadById({ id, options: includeOptions })
+            .then(record => resolvedRecord = record);
         });
 
-        return store.loadById({ id, options: includeOptions })
-          .then(record => resolvedRecord = record);
+        it('calls the right API method', () => {
+          expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
+        });
+
+        it('resolves to the correct record', () => {
+          expect(resolvedRecord.attributes.title).toEqual('New Title');
+        });
+
+        it('makes the record available via byId()', () => {
+          const storedRecord = store.byId({ id });
+          expect(storedRecord.attributes.title).toEqual('New Title');
+        });
       });
 
-      it('calls the right API method', () => {
-        expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
-      });
+      describe('when the record is already present in the store', () => {
+        const id = '42';
+        const record = {
+          type: 'widgets',
+          id,
+          attributes: {
+            title: 'New Title',
+          },
+        };
 
-      it('resolves to the correct record', () => {
-        expect(resolvedRecord.attributes.title).toEqual('New Title');
-      });
+        let resolvedRecord;
 
-      it('makes the record available via byId()', () => {
-        const storedRecord = store.byId({ id });
-        expect(storedRecord.attributes.title).toEqual('New Title');
+        beforeEach(() => {
+          store.storeRecords([
+            {
+              type: 'widgets',
+              id: '42',
+              attributes: {
+                title: 'Old Title',
+              },
+            },
+          ]);
+
+          api.get.mockResolvedValue({
+            data: {
+              data: record,
+            },
+          });
+
+          return store.loadById({ id, options: includeOptions })
+            .then(record => resolvedRecord = record);
+        });
+
+        it('calls the right API method', () => {
+          expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
+        });
+
+        it('resolves to the right record', () => {
+          expect(resolvedRecord.attributes.title).toEqual('New Title');
+        });
+
+        it('makes the record available via byId()', () => {
+          const storedRecord = store.byId({ id });
+          expect(storedRecord.attributes.title).toEqual('New Title');
+        });
       });
     });
 
-    describe('when the record is already present in the store', () => {
-      const id = '42';
-      const record = {
-        type: 'widgets',
-        id,
-        attributes: {
-          title: 'New Title',
-        },
-      };
-
-      let resolvedRecord;
-
+    describe('error', () => {
       beforeEach(() => {
-        store.storeRecords([
-          {
-            type: 'widgets',
-            id: '42',
-            attributes: {
-              title: 'Old Title',
-            },
-          },
-        ]);
-
-        api.get.mockResolvedValue({
-          data: {
-            data: record,
-          },
-        });
-
-        return store.loadById({ id, options: includeOptions })
-          .then(record => resolvedRecord = record);
+        api.get.mockRejectedValue();
+        return store.loadById({ id: '42' });
       });
 
-      it('calls the right API method', () => {
-        expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
-      });
-
-      it('resolves to the right record', () => {
-        expect(resolvedRecord.attributes.title).toEqual('New Title');
-      });
-
-      it('makes the record available via byId()', () => {
-        const storedRecord = store.byId({ id });
-        expect(storedRecord.attributes.title).toEqual('New Title');
+      it('sets the error flag', () => {
+        expect(store.error).toEqual(true);
       });
     });
   });

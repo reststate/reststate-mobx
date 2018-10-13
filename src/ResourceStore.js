@@ -63,7 +63,10 @@ class ResourceStore {
       .then(response => (
         new Resource({ record: response.data, client: this.client })
       ))
-      .then(storeRecord(this.records));
+      .then(storeRecord(this.records))
+      .catch(error => {
+        this._error.set(true);
+      });
   }
 
   byId({ id }) {
