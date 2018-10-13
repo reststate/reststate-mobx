@@ -83,6 +83,9 @@ class ResourceStore {
       .then(resources => {
         this.filtered.push({ filter, resources });
         return resources.map(storeRecord(this.records));
+      })
+      .catch(error => {
+        this._error.set(true);
       });
   }
 
