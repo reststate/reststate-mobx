@@ -22,9 +22,14 @@ const matches = (criteria) => (test) => (
 class ResourceStore {
   constructor({ name, httpClient }) {
     this.client = new ResourceClient({ name, httpClient });
+    this._error = observable.box(false);
     this.records = observable([]);
     this.filtered = observable([]);
     this.relatedRecords = observable([]);
+  }
+
+  get error() {
+    return this._error.get();
   }
 
   storeRecords(records) {
@@ -34,6 +39,7 @@ class ResourceStore {
   }
 
   loadAll({ options } = {}) {
+    this._error.set(false);
     return this.client.all({ options })
       .then(response => (
         response.data.map(record => (
@@ -42,7 +48,10 @@ class ResourceStore {
       ))
       .then(records => (
         records.map(storeRecord(this.records))
-      ));
+      ))
+      .catch(error => {
+        this._error.set(true);
+      });
   }
 
   all() {

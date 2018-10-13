@@ -20,54 +20,67 @@ describe('ResourceStore', () => {
   });
 
   describe('loadAll', () => {
-    const records = [
-      {
-        type: 'widgets',
-        id: '1',
-      },
-    ];
-
-    let resolvedRecords;
-
-    beforeEach(() => {
-      api.get.mockResolvedValue({
-        data: {
-          data: records,
+    describe('success', () => {
+      const records = [
+        {
+          type: 'widgets',
+          id: '1',
         },
-      });
-    });
+      ];
 
-    describe('when passing no options', () => {
+      let resolvedRecords;
+
       beforeEach(() => {
-        return store.loadAll()
-          .then(records => resolvedRecords = records);
+        api.get.mockResolvedValue({
+          data: {
+            data: records,
+          },
+        });
       });
 
-      it('makes the correct API call', () => {
-        expect(api.get).toHaveBeenCalledWith('widgets?');
+      describe('when passing no options', () => {
+        beforeEach(() => {
+          return store.loadAll()
+            .then(records => resolvedRecords = records);
+        });
+
+        it('makes the correct API call', () => {
+          expect(api.get).toHaveBeenCalledWith('widgets?');
+        });
+
+        it('resolves to the records', () => {
+          expect(resolvedRecords.length).toEqual(1);
+          const record = resolvedRecords[0];
+          expect(record.id).toEqual('1');
+        });
+
+        it('makes records available via all()', () => {
+          const records = store.all();
+
+          expect(records.length).toEqual(1);
+          const record = records[0];
+          expect(record.id).toEqual('1');
+        });
       });
 
-      it('resolves to the records', () => {
-        expect(resolvedRecords.length).toEqual(1);
-        const record = resolvedRecords[0];
-        expect(record.id).toEqual('1');
-      });
-
-      it('makes records available via all()', () => {
-        const records = store.all();
-
-        expect(records.length).toEqual(1);
-        const record = records[0];
-        expect(record.id).toEqual('1');
+      describe('when passing an include option', () => {
+        it('makes the correct API call', () => {
+          return store.loadAll({ options: includeOptions })
+            .then(() => {
+              expect(api.get).toHaveBeenCalledWith('widgets?include=customers');
+            });
+        });
       });
     });
 
-    describe('when passing an include option', () => {
-      it('makes the correct API call', () => {
-        return store.loadAll({ options: includeOptions })
-          .then(() => {
-            expect(api.get).toHaveBeenCalledWith('widgets?include=customers');
-          });
+    describe('error', () => {
+      beforeEach(() => {
+        api.get.mockRejectedValue();
+        return store.loadAll();
+      });
+
+      it('sets the error flag', () => {
+        expect(store.error).toEqual(true);
       });
     });
   });
