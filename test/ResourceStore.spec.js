@@ -313,6 +313,12 @@ describe('ResourceStore', () => {
       id: '42',
     };
 
+    it('sets loading to true while loading', () => {
+      api.get.mockResolvedValue();
+      store.loadRelated({ parent });
+      expect(store.loading).toEqual(true);
+    });
+
     describe('success', () => {
       let resolvedRecords;
 
@@ -357,6 +363,10 @@ describe('ResourceStore', () => {
         expect(api.get).toHaveBeenCalledWith(
           'users/42/widgets?include=customers',
         );
+      });
+
+      it('sets loading to false when resolved', () => {
+        expect(store.loading).toEqual(false);
       });
 
       it('resolves to the returned results', () => {

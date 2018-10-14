@@ -117,6 +117,7 @@ class ResourceStore {
   }
 
   loadRelated({ parent, options } = {}) {
+    this._loading.set(true);
     return this.client.related({ parent, options })
       .then(response => (
         response.data.map(record => (
@@ -125,6 +126,7 @@ class ResourceStore {
       ))
       .then(resources => {
         const { id, type } = parent;
+        this._loading.set(false);
         this.relatedRecords.push({ id, type, resources });
         return resources.map(storeRecord(this.records));
       })
