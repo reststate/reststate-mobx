@@ -77,6 +77,7 @@ class ResourceStore {
         return storeRecord(this.records)(record);
       })
       .catch(error => {
+        this._loading.set(false);
         this._error.set(true);
       });
   }
@@ -99,6 +100,7 @@ class ResourceStore {
         return resources.map(storeRecord(this.records));
       })
       .catch(error => {
+        this._loading.set(false);
         this._error.set(true);
       });
   }
@@ -131,6 +133,7 @@ class ResourceStore {
         return resources.map(storeRecord(this.records));
       })
       .catch(error => {
+        this._loading.set(false);
         this._error.set(true);
       });
   }
