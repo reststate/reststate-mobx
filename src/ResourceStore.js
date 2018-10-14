@@ -49,13 +49,12 @@ class ResourceStore {
     return this.client.all({ options })
       .then(response => {
         this._loading.set(false);
-        return response.data.map(record => (
+        const records = response.data.map(record => (
           new Resource({ record, client: this.client })
         ));
+        records.forEach(storeRecord(this.records));
+        return records;
       })
-      .then(records => (
-        records.map(storeRecord(this.records))
-      ))
       .catch(error => {
         this._loading.set(false);
         this._error.set(true);
@@ -69,12 +68,14 @@ class ResourceStore {
   loadById({ id, options }) {
     this._loading.set(true);
     return this.client.find({ id, options })
-      .then(response => (
-        new Resource({ record: response.data, client: this.client })
-      ))
-      .then(record => {
+      .then(response => {
         this._loading.set(false);
-        return storeRecord(this.records)(record);
+        const record = new Resource({
+          record: response.data,
+          client: this.client,
+        });
+        storeRecord(this.records)(record);
+        return record;
       })
       .catch(error => {
         this._loading.set(false);
@@ -89,15 +90,14 @@ class ResourceStore {
   loadWhere({ filter, options } = {}) {
     this._loading.set(true);
     return this.client.where({ filter, options })
-      .then(response => (
-        response.data.map(record => (
+      .then(response => {
+        const resources = response.data.map(record => (
           new Resource({ record, client: this.client })
-        ))
-      ))
-      .then(resources => {
+        ));
         this.filtered.push({ filter, resources });
         this._loading.set(false);
-        return resources.map(storeRecord(this.records));
+        resources.forEach(storeRecord(this.records));
+        return resources;
       })
       .catch(error => {
         this._loading.set(false);
@@ -121,16 +121,15 @@ class ResourceStore {
   loadRelated({ parent, options } = {}) {
     this._loading.set(true);
     return this.client.related({ parent, options })
-      .then(response => (
-        response.data.map(record => (
-          new Resource({ record, client: this.client })
-        ))
-      ))
-      .then(resources => {
+      .then(response => {
         const { id, type } = parent;
         this._loading.set(false);
+        const resources = response.data.map(record => (
+          new Resource({ record, client: this.client })
+        ));
         this.relatedRecords.push({ id, type, resources });
-        return resources.map(storeRecord(this.records));
+        resources.forEach(storeRecord(this.records));
+        return resources;
       })
       .catch(error => {
         this._loading.set(false);
@@ -151,8 +150,11 @@ class ResourceStore {
 
   create(partialRecord) {
     return this.client.create(partialRecord)
-      .then(response => response.data)
-      .then(storeRecord(this.records))
+      .then(response => {
+        const record = response.data;
+        storeRecord(this.records)(record);
+        return record;
+      })
       .catch(response => {
         this._error.set(true);
         throw response.errors;
