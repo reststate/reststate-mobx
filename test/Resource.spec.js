@@ -169,6 +169,12 @@ describe('Resource', () => {
         api.delete.mockRejectedValue();
       });
 
+      it('sets loading to false when done loading', () => {
+        resource.delete().catch(() => {
+          expect(resource.loading).toEqual(false);
+        });
+      });
+
       it('sets error to true', () => {
         resource.delete().catch(() => {
           expect(resource.error).toEqual(true);
