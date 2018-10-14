@@ -221,6 +221,12 @@ describe('ResourceStore', () => {
       status: 'draft',
     };
 
+    it('sets loading to true while loading', () => {
+      api.get.mockResolvedValue();
+      store.loadWhere({ filter });
+      expect(store.loading).toEqual(true);
+    });
+
     describe('success', () => {
       let resolvedRecords;
 
@@ -265,6 +271,10 @@ describe('ResourceStore', () => {
         expect(api.get).toHaveBeenCalledWith(
           'widgets?filter[status]=draft&include=customers',
         );
+      });
+
+      it('sets loading to false', () => {
+        expect(store.loading).toEqual(false);
       });
 
       it('resolves to the results by filter', () => {

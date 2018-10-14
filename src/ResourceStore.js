@@ -86,6 +86,7 @@ class ResourceStore {
   }
 
   loadWhere({ filter, options } = {}) {
+    this._loading.set(true);
     return this.client.where({ filter, options })
       .then(response => (
         response.data.map(record => (
@@ -94,6 +95,7 @@ class ResourceStore {
       ))
       .then(resources => {
         this.filtered.push({ filter, resources });
+        this._loading.set(false);
         return resources.map(storeRecord(this.records));
       })
       .catch(error => {
