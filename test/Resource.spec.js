@@ -142,12 +142,23 @@ describe('Resource', () => {
       });
 
       api.delete.mockResolvedValue();
+    });
 
-      return resource.delete();
+    it('sets loading to true while loading', () => {
+      resource.delete();
+      expect(resource.loading).toEqual(true);
     });
 
     it('sends the correct API request', () => {
-      expect(api.delete).toHaveBeenCalledWith('widgets/42');
+      resource.delete().then(() => {
+        expect(api.delete).toHaveBeenCalledWith('widgets/42');
+      });
+    });
+
+    it('sets loading to false when done loading', () => {
+      resource.delete().then(() => {
+        expect(resource.loading).toEqual(false);
+      });
     });
   });
 });

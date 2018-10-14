@@ -30,7 +30,12 @@ class Resource {
   }
 
   delete() {
-    return this.client.delete({ id: this.id });
+    this._loading.set(true);
+    return this.client.delete({ id: this.id })
+      .then(response => {
+        this._loading.set(false);
+        return response;
+      });
   }
 }
 
