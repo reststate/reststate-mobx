@@ -26,6 +26,26 @@ describe('Resource', () => {
       },
     };
 
+    it('sets the loading flag while loading', () => {
+      resource = new Resource({
+        client,
+        record: {
+          type: 'widgets',
+          id: '42',
+          attributes: {
+            title: 'Old Title',
+          },
+        },
+      });
+      api.patch.mockResolvedValue({
+        data: {
+          data: expectedRecord,
+        },
+      });
+      resource.save();
+      expect(resource.loading).toEqual(true);
+    });
+
     describe('success', () => {
       beforeEach(() => {
         resource = new Resource({
@@ -60,6 +80,10 @@ describe('Resource', () => {
             },
           },
         );
+      });
+
+      it('sets loading to false when done', () => {
+        expect(resource.loading).toEqual(false);
       });
     });
 

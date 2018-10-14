@@ -2,8 +2,13 @@ const { observable } = require('mobx');
 class Resource {
   constructor({ record, client }) {
     this.client = client;
+    this._loading = observable.box(false);
     this._error = observable.box(false);
     Object.assign(this, record);
+  }
+
+  get loading() {
+    return this._loading.get();
   }
 
   get error() {
@@ -12,7 +17,12 @@ class Resource {
 
   save() {
     const { type, id, attributes, relationships } = this;
+    this._loading.set(true);
     return this.client.update({ type, id, attributes, relationships })
+      .then(response => {
+        this._loading.set(false);
+        return response;
+      })
       .catch(response => {
         this._error.set(true);
         throw response.errors;
