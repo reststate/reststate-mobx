@@ -67,11 +67,15 @@ class ResourceStore {
   }
 
   loadById({ id, options }) {
+    this._loading.set(true);
     return this.client.find({ id, options })
       .then(response => (
         new Resource({ record: response.data, client: this.client })
       ))
-      .then(storeRecord(this.records))
+      .then(record => {
+        this._loading.set(false);
+        return storeRecord(this.records)(record);
+      })
       .catch(error => {
         this._error.set(true);
       });

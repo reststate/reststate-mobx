@@ -101,6 +101,13 @@ describe('ResourceStore', () => {
 
   describe('loadById', () => {
     describe('success', () => {
+      it('sets loading to true while loading', () => {
+        const id = '42';
+        api.get.mockResolvedValue();
+        const promise = store.loadById({ id, options: includeOptions });
+        expect(store.loading).toEqual(true);
+      });
+
       describe('when the record is not yet present in the store', () => {
         const id = '42';
         const record = {
@@ -133,6 +140,10 @@ describe('ResourceStore', () => {
 
         it('calls the right API method', () => {
           expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
+        });
+
+        it('sets loading to false', () => {
+          expect(store.loading).toEqual(false);
         });
 
         it('resolves to the correct record', () => {
