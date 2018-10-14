@@ -35,6 +35,10 @@ class Resource {
       .then(response => {
         this._loading.set(false);
         return response;
+      })
+      .catch(error => {
+        this._error.set(true);
+        throw error;
       });
   }
 }

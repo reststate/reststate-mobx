@@ -140,24 +140,39 @@ describe('Resource', () => {
           id: '42',
         },
       });
-
-      api.delete.mockResolvedValue();
     });
 
-    it('sets loading to true while loading', () => {
-      resource.delete();
-      expect(resource.loading).toEqual(true);
-    });
+    describe('success', () => {
+      beforeEach(() => {
+        api.delete.mockResolvedValue();
+      });
+      it('sets loading to true while loading', () => {
+        resource.delete();
+        expect(resource.loading).toEqual(true);
+      });
 
-    it('sends the correct API request', () => {
-      resource.delete().then(() => {
-        expect(api.delete).toHaveBeenCalledWith('widgets/42');
+      it('sends the correct API request', () => {
+        resource.delete().then(() => {
+          expect(api.delete).toHaveBeenCalledWith('widgets/42');
+        });
+      });
+
+      it('sets loading to false when done loading', () => {
+        resource.delete().then(() => {
+          expect(resource.loading).toEqual(false);
+        });
       });
     });
 
-    it('sets loading to false when done loading', () => {
-      resource.delete().then(() => {
-        expect(resource.loading).toEqual(false);
+    describe('error', () => {
+      beforeEach(() => {
+        api.delete.mockRejectedValue();
+      });
+
+      it('sets error to true', () => {
+        resource.delete().catch(() => {
+          expect(resource.error).toEqual(true);
+        });
       });
     });
   });
