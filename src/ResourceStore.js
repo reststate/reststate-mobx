@@ -153,13 +153,16 @@ class ResourceStore {
 
   create(partialRecord) {
     this._error.set(false);
+    this._loading.set(true);
     return this.client.create(partialRecord)
       .then(response => {
+        this._loading.set(false);
         const record = response.data;
         storeRecord(this.records)(record);
         return record;
       })
       .catch(response => {
+        this._loading.set(false);
         this._error.set(true);
         throw response.errors;
       });
