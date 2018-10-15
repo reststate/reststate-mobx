@@ -89,6 +89,7 @@ class ResourceStore {
   }
 
   loadWhere({ filter, options } = {}) {
+    this._error.set(false);
     this._loading.set(true);
     return this.client.where({ filter, options })
       .then(response => {

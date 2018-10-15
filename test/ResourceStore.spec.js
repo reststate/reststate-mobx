@@ -256,10 +256,43 @@ describe('ResourceStore', () => {
       status: 'draft',
     };
 
+    const records = [
+      {
+        type: 'widget',
+        id: '2',
+        attributes: {
+          title: 'Foo',
+        },
+      },
+      {
+        type: 'widget',
+        id: '3',
+        attributes: {
+          title: 'Bar',
+        },
+      },
+    ];
+
     it('sets loading to true while loading', () => {
       api.get.mockResolvedValue();
       store.loadWhere({ filter });
       expect(store.loading).toEqual(true);
+    });
+
+    it('resets the error flag', () => {
+      api.get
+        .mockRejectedValueOnce()
+        .mockResolvedValueOnce({
+          data: {
+            data: records,
+          },
+        });
+
+      return store.loadWhere({ filter })
+        .then(() => store.loadWhere({ filter }))
+        .then(() => {
+          expect(store.error).toEqual(false);
+        });
     });
 
     describe('success', () => {
@@ -277,22 +310,7 @@ describe('ResourceStore', () => {
         ]);
         api.get.mockResolvedValue({
           data: {
-            data: [
-              {
-                type: 'widget',
-                id: '2',
-                attributes: {
-                  title: 'Foo',
-                },
-              },
-              {
-                type: 'widget',
-                id: '3',
-                attributes: {
-                  title: 'Bar',
-                },
-              },
-            ],
+            data: records,
           },
         });
 
