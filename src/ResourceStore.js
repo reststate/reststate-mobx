@@ -121,6 +121,7 @@ class ResourceStore {
   }
 
   loadRelated({ parent, options } = {}) {
+    this._error.set(false);
     this._loading.set(true);
     return this.client.related({ parent, options })
       .then(response => {
