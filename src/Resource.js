@@ -17,6 +17,7 @@ class Resource {
 
   save() {
     const { type, id, attributes, relationships } = this;
+    this._error.set(false);
     this._loading.set(true);
     return this.client.update({ type, id, attributes, relationships })
       .then(response => {

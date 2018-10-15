@@ -46,6 +46,33 @@ describe('Resource', () => {
       expect(resource.loading).toEqual(true);
     });
 
+    it('resets the error flag', () => {
+      resource = new Resource({
+        client,
+        record: {
+          type: 'widgets',
+          id: '42',
+          attributes: {
+            title: 'Old Title',
+          },
+        },
+      });
+
+      api.patch
+        .mockRejectedValueOnce()
+        .mockResolvedValueOnce({
+          data: {
+            data: expectedRecord,
+          },
+        });
+
+      return resource.save()
+        .catch(() => resource.save())
+        .then(() => {
+          expect(resource.error).toEqual(false);
+        });
+    });
+
     describe('success', () => {
       beforeEach(() => {
         resource = new Resource({
