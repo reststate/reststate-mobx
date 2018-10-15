@@ -20,14 +20,30 @@ describe('ResourceStore', () => {
   });
 
   describe('loadAll', () => {
-    describe('success', () => {
-      const records = [
-        {
-          type: 'widgets',
-          id: '1',
-        },
-      ];
+    const records = [
+      {
+        type: 'widgets',
+        id: '1',
+      },
+    ];
 
+    it('resets the error flag', () => {
+      api.get
+        .mockRejectedValueOnce()
+        .mockResolvedValueOnce({
+          data: {
+            data: records,
+          },
+        });
+
+      return store.loadAll()
+        .then(() => store.loadAll())
+        .then(() => {
+          expect(store.error).toEqual(false);
+        });
+    });
+
+    describe('success', () => {
       let promise;
       let resolvedRecords;
 
