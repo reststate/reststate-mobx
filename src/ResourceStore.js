@@ -66,6 +66,7 @@ class ResourceStore {
   }
 
   loadById({ id, options }) {
+    this._error.set(false);
     this._loading.set(true);
     return this.client.find({ id, options })
       .then(response => {

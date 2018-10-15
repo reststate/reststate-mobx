@@ -116,24 +116,39 @@ describe('ResourceStore', () => {
   });
 
   describe('loadById', () => {
+    const id = '42';
+    const record = {
+      type: 'widgets',
+      id,
+      attributes: {
+        title: 'New Title',
+      },
+    };
+
+    it('resets the error flag', () => {
+      api.get
+        .mockRejectedValueOnce()
+        .mockResolvedValueOnce({
+          data: {
+            data: record,
+          },
+        });
+
+      return store.loadById({ id })
+        .then(() => store.loadById({ id }))
+        .then(() => {
+          expect(store.error).toEqual(false);
+        });
+    });
+
     describe('success', () => {
       it('sets loading to true while loading', () => {
-        const id = '42';
         api.get.mockResolvedValue();
         const promise = store.loadById({ id, options: includeOptions });
         expect(store.loading).toEqual(true);
       });
 
       describe('when the record is not yet present in the store', () => {
-        const id = '42';
-        const record = {
-          type: 'widgets',
-          id,
-          attributes: {
-            title: 'New Title',
-          },
-        };
-
         let resolvedRecord;
 
         beforeEach(() => {
