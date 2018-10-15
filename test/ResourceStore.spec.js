@@ -484,6 +484,27 @@ describe('ResourceStore', () => {
         title: 'Baz',
       },
     };
+    const resultWidget = {
+      type: 'widget',
+      id: '27',
+      attributes: widget.attributes,
+    };
+
+    it('resets the error flag', () => {
+      api.post
+        .mockRejectedValueOnce({ data: {} })
+        .mockResolvedValueOnce({
+          data: {
+            data: resultWidget,
+          },
+        });
+
+      return store.create(widget)
+        .catch(() => store.create(widget))
+        .then(() => {
+          expect(store.error).toEqual(false);
+        });
+    });
 
     describe('success', () => {
       let resolvedRecord;
@@ -491,11 +512,7 @@ describe('ResourceStore', () => {
       beforeEach(() => {
         api.post.mockResolvedValue({
           data: {
-            data: {
-              type: 'widget',
-              id: '27',
-              attributes: widget.attributes,
-            },
+            data: resultWidget,
           },
         });
         return store.create(widget)

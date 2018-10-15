@@ -152,6 +152,7 @@ class ResourceStore {
   }
 
   create(partialRecord) {
+    this._error.set(false);
     return this.client.create(partialRecord)
       .then(response => {
         const record = response.data;
