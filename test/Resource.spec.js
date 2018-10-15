@@ -15,6 +15,16 @@ describe('Resource', () => {
       name: 'widgets',
       httpClient: api,
     });
+    resource = new Resource({
+      client,
+      record: {
+        type: 'widgets',
+        id: '42',
+        attributes: {
+          title: 'Old Title',
+        },
+      },
+    });
   });
 
   describe('save', () => {
@@ -27,16 +37,6 @@ describe('Resource', () => {
     };
 
     it('sets the loading flag while loading', () => {
-      resource = new Resource({
-        client,
-        record: {
-          type: 'widgets',
-          id: '42',
-          attributes: {
-            title: 'Old Title',
-          },
-        },
-      });
       api.patch.mockResolvedValue({
         data: {
           data: expectedRecord,
@@ -47,17 +47,6 @@ describe('Resource', () => {
     });
 
     it('resets the error flag', () => {
-      resource = new Resource({
-        client,
-        record: {
-          type: 'widgets',
-          id: '42',
-          attributes: {
-            title: 'Old Title',
-          },
-        },
-      });
-
       api.patch
         .mockRejectedValueOnce()
         .mockResolvedValueOnce({
@@ -75,17 +64,6 @@ describe('Resource', () => {
 
     describe('success', () => {
       beforeEach(() => {
-        resource = new Resource({
-          client,
-          record: {
-            type: 'widgets',
-            id: '42',
-            attributes: {
-              title: 'Old Title',
-            },
-          },
-        });
-
         api.patch.mockResolvedValue({
           data: {
             data: expectedRecord,
@@ -131,6 +109,7 @@ describe('Resource', () => {
       let response;
 
       beforeEach(() => {
+        // TODO: resource needs to be re-assigned here or test fails; why?
         resource = new Resource({
           client,
           record: {
