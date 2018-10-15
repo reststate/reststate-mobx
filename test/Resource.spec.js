@@ -148,10 +148,23 @@ describe('Resource', () => {
       });
     });
 
+    it('resets the error flag', () => {
+      api.delete
+        .mockRejectedValueOnce()
+        .mockResolvedValueOnce();
+
+      return resource.delete()
+        .catch(() => resource.delete())
+        .then(() => {
+          expect(resource.error).toEqual(false);
+        });
+    });
+
     describe('success', () => {
       beforeEach(() => {
         api.delete.mockResolvedValue();
       });
+
       it('sets loading to true while loading', () => {
         resource.delete();
         expect(resource.loading).toEqual(true);
@@ -174,6 +187,7 @@ describe('Resource', () => {
       beforeEach(() => {
         api.delete.mockRejectedValue();
       });
+
 
       it('sets loading to false when done loading', () => {
         resource.delete().catch(() => {

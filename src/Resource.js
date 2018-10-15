@@ -31,6 +31,7 @@ class Resource {
   }
 
   delete() {
+    this._error.set(false);
     this._loading.set(true);
     return this.client.delete({ id: this.id })
       .then(response => {
