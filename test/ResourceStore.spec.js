@@ -155,7 +155,11 @@ describe('ResourceStore', () => {
 
     describe('success', () => {
       it('sets loading to true while loading', () => {
-        api.get.mockResolvedValue();
+        api.get.mockResolvedValue({
+          data: {
+            data: record,
+          },
+        });
         const promise = store.loadById({ id, options: includeOptions });
         expect(store.loading).toEqual(true);
       });
