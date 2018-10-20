@@ -257,8 +257,12 @@ describe('ResourceStore', () => {
       let response;
 
       beforeEach(() => {
-        api.get.mockRejectedValue();
+        api.get.mockRejectedValue(error);
         response = store.loadById({ id: '42' });
+      });
+
+      it('rejects with the error', () => {
+        expect(response).rejects.toEqual(error);
       });
 
       it('sets loading to false when rejected', () => {
