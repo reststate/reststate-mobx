@@ -100,11 +100,17 @@ describe('ResourceStore', () => {
     });
 
     describe('error', () => {
+      const error = { dummy: 'error' };
+
       let response;
 
       beforeEach(() => {
-        api.get.mockRejectedValue();
+        api.get.mockRejectedValue(error);
         response = store.loadAll();
+      });
+
+      it('rejects with the error', () => {
+        expect(response).rejects.toEqual(error);
       });
 
       it('sets loading to false when done', () => {
