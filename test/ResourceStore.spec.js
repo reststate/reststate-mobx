@@ -248,17 +248,25 @@ describe('ResourceStore', () => {
     });
 
     describe('error', () => {
+      const error = { dummy: 'error' };
+
+      let response;
+
       beforeEach(() => {
         api.get.mockRejectedValue();
-        return store.loadById({ id: '42' });
+        response = store.loadById({ id: '42' });
       });
 
       it('sets loading to false when rejected', () => {
-        expect(store.loading).toEqual(false);
+        response.then(() => {
+          expect(store.loading).toEqual(false);
+        });
       });
 
       it('sets the error flag', () => {
-        expect(store.error).toEqual(true);
+        response.then(() => {
+          expect(store.error).toEqual(true);
+        });
       });
     });
   });
