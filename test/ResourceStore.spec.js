@@ -100,17 +100,23 @@ describe('ResourceStore', () => {
     });
 
     describe('error', () => {
+      let response;
+
       beforeEach(() => {
         api.get.mockRejectedValue();
-        return store.loadAll();
+        response = store.loadAll();
       });
 
       it('sets loading to false when done', () => {
-        expect(store.loading).toEqual(false);
+        response.then(() => {
+          expect(store.loading).toEqual(false);
+        });
       });
 
       it('sets the error flag', () => {
-        expect(store.error).toEqual(true);
+        response.then(() => {
+          expect(store.error).toEqual(true);
+        });
       });
     });
   });
