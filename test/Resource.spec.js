@@ -96,7 +96,7 @@ describe('Resource', () => {
       const errors = [
         {
           title: "can't be blank",
-          detail: "title - can't be blank",
+          detail: "title - can't be blank (3)",
           code: '100',
           source: {
             pointer: '/data/attributes/title',
@@ -121,7 +121,7 @@ describe('Resource', () => {
           },
         });
 
-        api.patch.mockRejectedValue({ data: { errors } });
+        api.patch.mockRejectedValue(errors);
         response = resource.save();
       });
 

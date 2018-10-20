@@ -558,7 +558,7 @@ describe('ResourceStore', () => {
       const errors = [
         {
           title: "can't be blank",
-          detail: "title - can't be blank",
+          detail: "title - can't be blank (1)",
           code: '100',
           source: {
             pointer: '/data/attributes/title',
@@ -570,7 +570,7 @@ describe('ResourceStore', () => {
       let response;
 
       beforeEach(() => {
-        api.post.mockRejectedValue({ data: { errors } });
+        api.post.mockRejectedValue(errors);
         response = store.create(widget);
       });
 

@@ -24,9 +24,9 @@ class Resource {
         this._loading.set(false);
         return response;
       })
-      .catch(response => {
+      .catch(error => {
         this._error.set(true);
-        throw response.errors;
+        throw error;
       });
   }
 

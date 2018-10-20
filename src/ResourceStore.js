@@ -161,10 +161,10 @@ class ResourceStore {
         storeRecord(this.records)(record);
         return record;
       })
-      .catch(response => {
+      .catch(error => {
         this._loading.set(false);
         this._error.set(true);
-        throw response.errors;
+        throw error;
       });
   }
 }
