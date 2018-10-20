@@ -37,7 +37,7 @@ describe('ResourceStore', () => {
         });
 
       return store.loadAll()
-        .then(() => store.loadAll())
+        .catch(() => store.loadAll())
         .then(() => {
           expect(store.error).toEqual(false);
         });
@@ -108,13 +108,13 @@ describe('ResourceStore', () => {
       });
 
       it('sets loading to false when done', () => {
-        response.then(() => {
+        response.catch(() => {
           expect(store.loading).toEqual(false);
         });
       });
 
       it('sets the error flag', () => {
-        response.then(() => {
+        response.catch(() => {
           expect(store.error).toEqual(true);
         });
       });

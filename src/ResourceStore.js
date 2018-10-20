@@ -58,6 +58,7 @@ class ResourceStore {
       .catch(error => {
         this._loading.set(false);
         this._error.set(true);
+        throw error;
       });
   }
 
