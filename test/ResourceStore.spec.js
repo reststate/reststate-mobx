@@ -114,13 +114,13 @@ describe('ResourceStore', () => {
       });
 
       it('sets loading to false when done', () => {
-        response.catch(() => {
+        return response.catch(() => {
           expect(store.loading).toEqual(false);
         });
       });
 
       it('sets the error flag', () => {
-        response.catch(() => {
+        return response.catch(() => {
           expect(store.error).toEqual(true);
         });
       });
@@ -266,13 +266,13 @@ describe('ResourceStore', () => {
       });
 
       it('sets loading to false when rejected', () => {
-        response.catch(() => {
+        return response.catch(() => {
           expect(store.loading).toEqual(false);
         });
       });
 
       it('sets the error flag', () => {
-        response.catch(() => {
+        return response.catch(() => {
           expect(store.error).toEqual(true);
         });
       });
@@ -395,13 +395,13 @@ describe('ResourceStore', () => {
       });
 
       it('sets loading to false when rejected', () => {
-        response.catch(() => {
+        return response.catch(() => {
           expect(store.loading).toEqual(false);
         });
       });
 
       it('sets the error flag', () => {
-        response.catch(() => {
+        return response.catch(() => {
           expect(store.error).toEqual(true);
         });
       });
@@ -519,13 +519,13 @@ describe('ResourceStore', () => {
       });
 
       it('sets loading to false when rejected', () => {
-        response.catch(() => {
+        return response.catch(() => {
           expect(store.loading).toEqual(false);
         });
       });
 
       it('sets the error flag', () => {
-        response.catch(() => {
+        return response.catch(() => {
           expect(store.error).toEqual(true);
         });
       });
@@ -633,13 +633,13 @@ describe('ResourceStore', () => {
       });
 
       it('sets loading to false when rejected', () => {
-        response.catch(() => {
+        return response.catch(() => {
           expect(store.loading).toEqual(false);
         });
       });
 
       it('sets the error flag', () => {
-        response.catch(() => {
+        return response.catch(() => {
           expect(store.error).toEqual(true);
         });
       });
