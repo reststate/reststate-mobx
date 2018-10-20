@@ -302,7 +302,11 @@ describe('ResourceStore', () => {
     ];
 
     it('sets loading to true while loading', () => {
-      api.get.mockResolvedValue();
+      api.get.mockResolvedValue({
+        data: {
+          data: records,
+        },
+      });
       store.loadWhere({ filter });
       expect(store.loading).toEqual(true);
     });
@@ -317,7 +321,7 @@ describe('ResourceStore', () => {
         });
 
       return store.loadWhere({ filter })
-        .then(() => store.loadWhere({ filter }))
+        .catch(() => store.loadWhere({ filter }))
         .then(() => {
           expect(store.error).toEqual(false);
         });
@@ -377,17 +381,29 @@ describe('ResourceStore', () => {
     });
 
     describe('error', () => {
+      const error = { dummy: 'error' };
+
+      let response;
+
       beforeEach(() => {
-        api.get.mockRejectedValue();
-        return store.loadWhere({ filter });
+        api.get.mockRejectedValue(error);
+        response = store.loadWhere({ filter });
+      });
+
+      it('rejects with the error', () => {
+        expect(response).rejects.toEqual(error);
       });
 
       it('sets loading to false when rejected', () => {
-        expect(store.loading).toEqual(false);
+        response.catch(() => {
+          expect(store.loading).toEqual(false);
+        });
       });
 
       it('sets the error flag', () => {
-        expect(store.error).toEqual(true);
+        response.catch(() => {
+          expect(store.error).toEqual(true);
+        });
       });
     });
   });
