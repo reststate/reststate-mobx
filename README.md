@@ -6,6 +6,27 @@
 
 This is a very early proof-of-concept, so THERE IS NO ERROR HANDLING YET, and many features of JSON API are not yet supported. Open a GitHub issue with any other features you'd like to see!
 
+## Synopsis
+
+```javascript
+const store = new ResourceStore({
+  name: 'widgets',
+  httpClient: axios.create(...),
+});
+
+store.loadAll()
+  .then(() => {
+    const widgets = store.all();
+    console.log(widgets);
+  });
+
+store.create({
+  attributes: {
+    title: 'My Widget',
+  },
+});
+```
+
 ## Installation
 
 ```
