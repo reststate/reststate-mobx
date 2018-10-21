@@ -14,7 +14,10 @@ class Resource {
   constructor({ record, client }) {
     this.client = client;
     this._status = observable.box(STATUS_INITIAL);
-    Object.assign(this, record);
+    this.type = record.type;
+    this.id = record.id;
+    this.attributes = record.attributes;
+    this.relationships = record.relationships;
   }
 
   get loading() {
