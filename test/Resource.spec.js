@@ -81,7 +81,7 @@ describe('Resource', () => {
           {
             data: {
               ...expectedRecord,
-              relationships: undefined,
+              relationships: {},
             },
           },
         );

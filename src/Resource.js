@@ -17,7 +17,7 @@ class Resource {
     this.type = record.type;
     this.id = record.id;
     this.attributes = observable(record.attributes || {});
-    this.relationships = record.relationships;
+    this.relationships = observable(record.relationships || {});
   }
 
   get loading() {
@@ -29,8 +29,10 @@ class Resource {
   }
 
   save() {
-    const { type, id, attributes, relationships } = this;
     this._status.set(STATUS_LOADING);
+    const { type, id } = this;
+    const attributes = Object.assign({}, this.attributes);
+    const relationships = Object.assign({}, this.relationships);
     return this.client.update({ type, id, attributes, relationships })
       .then(response => {
         this._status.set(STATUS_SUCCESS);
