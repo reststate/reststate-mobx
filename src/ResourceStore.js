@@ -19,6 +19,12 @@ const matches = (criteria) => (test) => (
   ))
 );
 
+const handleError = (store) => (error) => {
+  store._loading.set(false);
+  store._error.set(true);
+  throw error;
+};
+
 class ResourceStore {
   constructor({ name, httpClient }) {
     this.client = new ResourceClient({ name, httpClient });
@@ -55,11 +61,7 @@ class ResourceStore {
         records.forEach(storeRecord(this.records));
         return records;
       })
-      .catch(error => {
-        this._loading.set(false);
-        this._error.set(true);
-        throw error;
-      });
+      .catch(handleError(this));
   }
 
   all() {
@@ -79,11 +81,7 @@ class ResourceStore {
         storeRecord(this.records)(record);
         return record;
       })
-      .catch(error => {
-        this._loading.set(false);
-        this._error.set(true);
-        throw error;
-      });
+      .catch(handleError(this));
   }
 
   byId({ id }) {
@@ -103,11 +101,7 @@ class ResourceStore {
         resources.forEach(storeRecord(this.records));
         return resources;
       })
-      .catch(error => {
-        this._loading.set(false);
-        this._error.set(true);
-        throw error;
-      });
+      .catch(handleError(this));
   }
 
   where({ filter }) {
@@ -137,11 +131,7 @@ class ResourceStore {
         resources.forEach(storeRecord(this.records));
         return resources;
       })
-      .catch(error => {
-        this._loading.set(false);
-        this._error.set(true);
-        throw error;
-      });
+      .catch(handleError(this));
   }
 
   related({ parent }) {
@@ -156,20 +146,18 @@ class ResourceStore {
   }
 
   create(partialRecord) {
+    this._status.set(STATUS_INITIAL);
     this._error.set(false);
     this._loading.set(true);
     return this.client.create(partialRecord)
       .then(response => {
+        this._status.set(STATUS_SUCCESS);
         this._loading.set(false);
         const record = response.data;
         storeRecord(this.records)(record);
         return record;
       })
-      .catch(error => {
-        this._loading.set(false);
-        this._error.set(true);
-        throw error;
-      });
+      .catch(handleError(this));
   }
 }
 
