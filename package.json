@@ -10,7 +10,7 @@
     "lint": "eslint src test"
   },
   "dependencies": {
-    "@reststate/client": "^0.0.1"
+    "@reststate/client": "^0.0.2"
   },
   "peerDependencies": {
     "mobx": "^5.5.0"
