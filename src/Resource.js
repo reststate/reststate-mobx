@@ -16,7 +16,7 @@ class Resource {
     this._status = observable.box(STATUS_INITIAL);
     this.type = record.type;
     this.id = record.id;
-    this.attributes = record.attributes;
+    this.attributes = observable(record.attributes || {});
     this.relationships = record.relationships;
   }
 
