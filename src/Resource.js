@@ -1,48 +1,49 @@
 const { observable } = require('mobx');
+
+const STATUS_INITIAL = 'INITIAL';
+const STATUS_LOADING = 'LOADING';
+const STATUS_ERROR = 'ERROR';
+const STATUS_SUCCESS = 'SUCCESS';
+
+const handleError = (record) => (error) => {
+  record._status.set(STATUS_ERROR);
+  throw error;
+};
+
 class Resource {
   constructor({ record, client }) {
     this.client = client;
-    this._loading = observable.box(false);
-    this._error = observable.box(false);
+    this._status = observable.box(STATUS_INITIAL);
     Object.assign(this, record);
   }
 
   get loading() {
-    return this._loading.get();
+    return this._status.get() ===  STATUS_LOADING;
   }
 
   get error() {
-    return this._error.get();
+    return this._status.get() ===  STATUS_ERROR;
   }
 
   save() {
     const { type, id, attributes, relationships } = this;
-    this._error.set(false);
-    this._loading.set(true);
+    this._status.set(STATUS_LOADING);
     return this.client.update({ type, id, attributes, relationships })
       .then(response => {
-        this._loading.set(false);
+        this._status.set(STATUS_SUCCESS);
         return response;
       })
-      .catch(error => {
-        this._error.set(true);
-        throw error;
-      });
+      .catch(handleError(this));
   }
 
   delete() {
-    this._error.set(false);
-    this._loading.set(true);
+    this._status.set(STATUS_LOADING);
     return this.client.delete({ id: this.id })
       .then(response => {
-        this._loading.set(false);
+        this._status.set(STATUS_SUCCESS);
         return response;
       })
-      .catch(error => {
-        this._loading.set(false);
-        this._error.set(true);
-        throw error;
-      });
+      .catch(handleError(this));
   }
 }
 
