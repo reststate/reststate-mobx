@@ -93,7 +93,8 @@ describe('ResourceStore', () => {
         it('makes the correct API call', () => {
           return store.loadAll({ options: fieldOptions })
             .then(() => {
-              expect(api.get).toHaveBeenCalledWith('widgets?fields[widgets]=title');
+              expect(api.get)
+                .toHaveBeenCalledWith('widgets?fields[widgets]=title');
             });
         });
       });
@@ -186,7 +187,8 @@ describe('ResourceStore', () => {
         });
 
         it('calls the right API method', () => {
-          expect(api.get).toHaveBeenCalledWith('widgets/42?fields[widgets]=title');
+          expect(api.get)
+            .toHaveBeenCalledWith('widgets/42?fields[widgets]=title');
         });
 
         it('sets loading to false', () => {
@@ -237,7 +239,8 @@ describe('ResourceStore', () => {
         });
 
         it('calls the right API method', () => {
-          expect(api.get).toHaveBeenCalledWith('widgets/42?fields[widgets]=title');
+          expect(api.get)
+            .toHaveBeenCalledWith('widgets/42?fields[widgets]=title');
         });
 
         it('resolves to the right record', () => {
