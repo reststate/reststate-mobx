@@ -1,8 +1,8 @@
 import ResourceStore from '../src/ResourceStore';
 
 describe('ResourceStore', () => {
-  const includeOptions = {
-    include: 'customers',
+  const fieldOptions = {
+    'fields[widgets]': 'title',
   };
 
   let store;
@@ -91,9 +91,9 @@ describe('ResourceStore', () => {
 
       describe('when passing an include option', () => {
         it('makes the correct API call', () => {
-          return store.loadAll({ options: includeOptions })
+          return store.loadAll({ options: fieldOptions })
             .then(() => {
-              expect(api.get).toHaveBeenCalledWith('widgets?include=customers');
+              expect(api.get).toHaveBeenCalledWith('widgets?fields[widgets]=title');
             });
         });
       });
@@ -160,7 +160,7 @@ describe('ResourceStore', () => {
             data: record,
           },
         });
-        const promise = store.loadById({ id, options: includeOptions });
+        const promise = store.loadById({ id, options: fieldOptions });
         expect(store.loading).toEqual(true);
       });
 
@@ -181,12 +181,12 @@ describe('ResourceStore', () => {
             },
           });
 
-          return store.loadById({ id, options: includeOptions })
+          return store.loadById({ id, options: fieldOptions })
             .then(record => resolvedRecord = record);
         });
 
         it('calls the right API method', () => {
-          expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
+          expect(api.get).toHaveBeenCalledWith('widgets/42?fields[widgets]=title');
         });
 
         it('sets loading to false', () => {
@@ -232,12 +232,12 @@ describe('ResourceStore', () => {
             },
           });
 
-          return store.loadById({ id, options: includeOptions })
+          return store.loadById({ id, options: fieldOptions })
             .then(record => resolvedRecord = record);
         });
 
         it('calls the right API method', () => {
-          expect(api.get).toHaveBeenCalledWith('widgets/42?include=customers');
+          expect(api.get).toHaveBeenCalledWith('widgets/42?fields[widgets]=title');
         });
 
         it('resolves to the right record', () => {
@@ -346,7 +346,7 @@ describe('ResourceStore', () => {
           },
         });
 
-        return store.loadWhere({ filter, options: includeOptions })
+        return store.loadWhere({ filter, options: fieldOptions })
           .then(response => {
             resolvedRecords = response;
           });
@@ -354,7 +354,7 @@ describe('ResourceStore', () => {
 
       it('passes the filter on to the server', () => {
         expect(api.get).toHaveBeenCalledWith(
-          'widgets?filter[status]=draft&include=customers',
+          'widgets?filter[status]=draft&fields[widgets]=title',
         );
       });
 
@@ -476,7 +476,7 @@ describe('ResourceStore', () => {
           },
         });
 
-        return store.loadRelated({ parent, options: includeOptions })
+        return store.loadRelated({ parent, options: fieldOptions })
           .then(response => {
             resolvedRecords = response;
           });
@@ -484,7 +484,7 @@ describe('ResourceStore', () => {
 
       it('passes the filter on to the server', () => {
         expect(api.get).toHaveBeenCalledWith(
-          'users/42/widgets?include=customers',
+          'users/42/widgets?fields[widgets]=title',
         );
       });
 
