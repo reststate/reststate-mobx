@@ -1,6 +1,6 @@
 {
   "name": "@reststate/mobx",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "A JSON API client and store layer for MobX",
   "main": "index.js",
   "author": "Josh Justice <me@codingitwrong.com>",
