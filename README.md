@@ -96,11 +96,18 @@ Working with JSON API data is split into two parts:
 
 ### loadAll/all methods
 
-To retrieve all of the records for a resource, call the `loadAll()` method to save them into the store. The method returns a promise that will resolve to the recoreds:
+To retrieve all of the records for a resource, call the `loadAll()` method to save them into the store. The method returns a promise that will resolve to the records:
 
 ```javascript
 store.loadAll()
   .then(widgets => console.log(widgets));
+```
+
+Typically, though, you will access records synchronously with the `all()` method:
+
+```javascript
+const widgets = store.all();
+console.log(widgets);
 ```
 
 ### loadById method
@@ -112,17 +119,35 @@ store.loadById({ id: 42 })
   .then(widget => console.log(widget));
 ```
 
+Access it synchronously with the `byId()` method:
+
+```javascript
+const widget = store.byId({ id: 42 });
+console.log(widget);
+```
+
+If you know the record has already been retrieved, you don't need to load it again. For example, if you've loaded all records on a list screen, and then you click to view the details for a single record, you can just use `byId()` directly, bypassing `loadById()`.
+
 ### loadWhere action / where getter
 
 To filter/query for records based on certain criteria, use the `loadWhere` method, passing it an object of filter keys and values to send to the server:
 
-```js
+```javascript
 const filter = {
   category: 'whizbang',
 };
 store.loadWhere({ filter })
   .then(widgets => console.log(widgets));
 ```
+
+Records can be accessed synchronously by passing the same filter to the `where()` method:
+
+```javascript
+const widgets = store.where({ filter });
+console.log(widgets);
+```
+
+`where()` doesn’t perform any filtering logic on the client side; it simply keeps track of which IDs were returned by the server side request and retrieves those records.
 
 ### loadRelated method
 
@@ -140,7 +165,7 @@ store.loadRelated({ parent })
 
 By default, the name of the relationship on `parent` is assumed to be the same as the name of the other model: in this case, `widgets`. In cases where the names are not the same, you can explicitly pass the relationship name:
 
-```js
+```javascript
 const parent = {
   type: 'categories',
   id: 27,
@@ -150,6 +175,13 @@ const relationship = 'purchased-widgets';
 
 store.loadRelated({ parent, relationship })
   .then(widgets => console.log(widgets));
+```
+
+Records can be accessed synchronously using the `related()` method:
+
+```javascript
+const widgets = store.loadRelated({ parent });
+console.log(widgets);
 ```
 
 ### create
@@ -189,11 +221,9 @@ store.create(recordData);
 The returned record objects are instances of `Record`. To update records, mutate attributes, then call `update()` on the record:
 
 ```javascript
-store.findById({ id: 42 })
-  .then(widget => {
-    widget.attributes.title = 'Updated Title';
-    return widget.update();
-  });
+const widget = store.byId({ id: 42 });
+widget.attributes.title = 'Updated Title';
+widget.update();
 ```
 
 ### delete
@@ -201,8 +231,8 @@ store.findById({ id: 42 })
 To delete, call `delete()` on a record:
 
 ```javascript
-store.findById({ id: 42 })
-  .then(widget => widget.delete());
+const widget = store.byId({ id: 42 });
+widget.delete();
 ```
 
 ## License
