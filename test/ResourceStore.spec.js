@@ -1,4 +1,7 @@
+import { configure } from 'mobx';
 import ResourceStore from '../src/ResourceStore';
+
+configure({ enforceActions: 'always' });
 
 describe('ResourceStore', () => {
   const fieldOptions = {

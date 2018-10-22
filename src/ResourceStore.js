@@ -1,4 +1,4 @@
-const { observable } = require('mobx');
+const { observable, action, runInAction } = require('mobx');
 const { ResourceClient } = require('@reststate/client');
 const Resource = require('./Resource');
 
@@ -25,7 +25,9 @@ const matches = (criteria) => (test) => (
 );
 
 const handleError = (store) => (error) => {
-  store._status.set(STATUS_ERROR);
+  runInAction(() => {
+    store._status.set(STATUS_ERROR);
+  });
   throw error;
 };
 
@@ -52,57 +54,63 @@ class ResourceStore {
     ));
   }
 
-  loadAll({ options } = {}) {
+  loadAll = action(({ options } = {}) => {
     this._status.set(STATUS_LOADING);
     return this.client.all({ options })
       .then(response => {
-        this._status.set(STATUS_SUCCESS);
         const records = response.data.map(record => (
           new Resource({ record, client: this.client })
         ));
-        records.forEach(storeRecord(this.records));
+        runInAction(() => {
+          this._status.set(STATUS_SUCCESS);
+          records.forEach(storeRecord(this.records));
+        });
         return records;
       })
       .catch(handleError(this));
-  }
+  })
 
   all() {
     return this.records;
   }
 
-  loadById({ id, options }) {
+  loadById = action(({ id, options }) => {
     this._status.set(STATUS_LOADING);
     return this.client.find({ id, options })
       .then(response => {
-        this._status.set(STATUS_SUCCESS);
         const record = new Resource({
           record: response.data,
           client: this.client,
         });
-        storeRecord(this.records)(record);
+        runInAction(() => {
+          this._status.set(STATUS_SUCCESS);
+          storeRecord(this.records)(record);
+        });
         return record;
       })
       .catch(handleError(this));
-  }
+  })
 
   byId({ id }) {
     return this.records.find(record => record.id === id);
   }
 
-  loadWhere({ filter, options } = {}) {
+  loadWhere = action(({ filter, options } = {}) => {
     this._status.set(STATUS_LOADING);
     return this.client.where({ filter, options })
       .then(response => {
-        this._status.set(STATUS_SUCCESS);
         const resources = response.data.map(record => (
           new Resource({ record, client: this.client })
         ));
-        this.filtered.push({ filter, resources });
-        resources.forEach(storeRecord(this.records));
+        runInAction(() => {
+          this._status.set(STATUS_SUCCESS);
+          this.filtered.push({ filter, resources });
+          resources.forEach(storeRecord(this.records));
+        });
         return resources;
       })
       .catch(handleError(this));
-  }
+  })
 
   where({ filter }) {
     const matchesRequestedFilter = matches(filter);
@@ -117,21 +125,23 @@ class ResourceStore {
     return entry.resources;
   }
 
-  loadRelated({ parent, options } = {}) {
+  loadRelated = action(({ parent, options } = {}) => {
     this._status.set(STATUS_LOADING);
     return this.client.related({ parent, options })
       .then(response => {
-        this._status.set(STATUS_SUCCESS);
         const { id, type } = parent;
         const resources = response.data.map(record => (
           new Resource({ record, client: this.client })
         ));
-        this.relatedRecords.push({ id, type, resources });
-        resources.forEach(storeRecord(this.records));
+        runInAction(() => {
+          this._status.set(STATUS_SUCCESS);
+          this.relatedRecords.push({ id, type, resources });
+          resources.forEach(storeRecord(this.records));
+        });
         return resources;
       })
       .catch(handleError(this));
-  }
+  })
 
   related({ parent }) {
     const { type, id } = parent;
@@ -144,17 +154,19 @@ class ResourceStore {
     return related.resources;
   }
 
-  create(partialRecord) {
+  create = action((partialRecord) => {
     this._status.set(STATUS_LOADING);
     return this.client.create(partialRecord)
       .then(response => {
-        this._status.set(STATUS_SUCCESS);
         const record = response.data;
-        storeRecord(this.records)(record);
+        runInAction(() => {
+          this._status.set(STATUS_SUCCESS);
+          storeRecord(this.records)(record);
+        });
         return record;
       })
       .catch(handleError(this));
-  }
+  })
 }
 
 module.exports = ResourceStore;

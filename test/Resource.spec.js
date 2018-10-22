@@ -1,5 +1,8 @@
-import Resource from '../src/Resource';
+import { configure, runInAction } from 'mobx';
 import { ResourceClient } from '@reststate/client';
+import Resource from '../src/Resource';
+
+configure({ enforceActions: 'always' });
 
 describe('Resource', () => {
   let api;
@@ -70,7 +73,9 @@ describe('Resource', () => {
           },
         });
 
-        resource.attributes.title = 'New Title';
+        runInAction(() => {
+          resource.attributes.title = 'New Title';
+        });
 
         return resource.save();
       });
