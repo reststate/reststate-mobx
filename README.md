@@ -89,7 +89,12 @@ That's all you need to do--the JSON API spec takes care of the rest!
 
 ## Usage
 
-### loadAll method
+Working with JSON API data is split into two parts:
+
+- **load methods** are used to asynchronously request data from the server or update data on the server, storing the results into the store's state.
+- **observable methods** are used to synchronously access data from the module's state. These should be used in rendering out contents to React, for example. Because they are observable, React will rerender when they are changed.
+
+### loadAll/all methods
 
 To retrieve all of the records for a resource, call the `loadAll()` method to save them into the store. The method returns a promise that will resolve to the recoreds:
 
