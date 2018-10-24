@@ -97,7 +97,7 @@ console.log(widgets);
 
 ## Options
 
-All read methods take an optional `options` property, consisting of an object of additional options to pass. Each key/value pair in the object is translated into a query string parameter key/value pair:
+All load methods take an optional `options` property, consisting of an object of additional options to pass. Each key/value pair in the object is translated into a query string parameter key/value pair:
 
 ```js
 store.loadAll({
