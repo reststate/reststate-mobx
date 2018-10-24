@@ -143,9 +143,15 @@ describe('Resource', () => {
   });
 
   describe('delete', () => {
+    let store;
+
     beforeEach(() => {
+      store = {
+        remove: jest.fn(),
+      };
       resource = new Resource({
         client,
+        store,
         record: {
           type: 'widgets',
           id: '42',
@@ -184,6 +190,12 @@ describe('Resource', () => {
       it('sets loading to false when done loading', () => {
         resource.delete().then(() => {
           expect(resource.loading).toEqual(false);
+        });
+      });
+
+      it('removes the record from the store', () => {
+        resource.delete().then(() => {
+          expect(store.remove).toHaveBeenCalledWith(resource);
         });
       });
     });

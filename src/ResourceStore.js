@@ -38,6 +38,105 @@ class ResourceStore {
     this.records = observable([]);
     this.filtered = observable([]);
     this.relatedRecords = observable([]);
+
+    this.loadAll = action(({ options } = {}) => {
+      this._status.set(STATUS_LOADING);
+      return this.client.all({ options })
+        .then(response => {
+          const records = response.data.map(record => (
+            new Resource({ record, client: this.client, store: this })
+          ));
+          runInAction(() => {
+            this._status.set(STATUS_SUCCESS);
+            records.forEach(storeRecord(this.records));
+          });
+          return records;
+        })
+        .catch(handleError(this));
+    });
+
+    this.loadById = action(({ id, options }) => {
+      this._status.set(STATUS_LOADING);
+      return this.client.find({ id, options })
+        .then(response => {
+          const record = new Resource({
+            record: response.data,
+            client: this.client,
+            store: this,
+          });
+          runInAction(() => {
+            this._status.set(STATUS_SUCCESS);
+            storeRecord(this.records)(record);
+          });
+          return record;
+        })
+        .catch(handleError(this));
+    });
+
+    this.loadWhere = action(({ filter, options } = {}) => {
+      this._status.set(STATUS_LOADING);
+      return this.client.where({ filter, options })
+        .then(response => {
+          const resources = response.data.map(record => (
+            new Resource({ record, client: this.client, store: this })
+          ));
+          runInAction(() => {
+            this._status.set(STATUS_SUCCESS);
+            this.filtered.push({ filter, resources });
+            resources.forEach(storeRecord(this.records));
+          });
+          return resources;
+        })
+        .catch(handleError(this));
+    });
+
+    this.loadRelated = action(({ parent, options } = {}) => {
+      this._status.set(STATUS_LOADING);
+      return this.client.related({ parent, options })
+        .then(response => {
+          const { id, type } = parent;
+          const resources = response.data.map(record => (
+            new Resource({ record, client: this.client, store: this })
+          ));
+          runInAction(() => {
+            this._status.set(STATUS_SUCCESS);
+            this.relatedRecords.push({ id, type, resources });
+            resources.forEach(storeRecord(this.records));
+          });
+          return resources;
+        })
+        .catch(handleError(this));
+    });
+
+    this.create = action((partialRecord) => {
+      this._status.set(STATUS_LOADING);
+      return this.client.create(partialRecord)
+        .then(response => {
+          const record = new Resource({
+            record: response.data,
+            client: this.client,
+            store: this,
+          });
+          runInAction(() => {
+            this._status.set(STATUS_SUCCESS);
+            storeRecord(this.records)(record);
+          });
+          return record;
+        })
+        .catch(handleError(this));
+    });
+
+    this.storeRecords = action((records) => {
+      this.records.replace(records.map(record => (
+        new Resource({ record, client: this.client, store: this })
+      )));
+    });
+
+    this.remove = action((record) => {
+      this.records.replace(this.records.filter(testRecord => (
+        testRecord.id !== record.id
+      )));
+    });
   }
 
   get loading() {
@@ -48,69 +147,13 @@ class ResourceStore {
     return this._status.get() === STATUS_ERROR;
   }
 
-  storeRecords(records) {
-    this.records = records.map(record => (
-      new Resource({ record, client: this.client })
-    ));
-  }
-
-  loadAll = action(({ options } = {}) => {
-    this._status.set(STATUS_LOADING);
-    return this.client.all({ options })
-      .then(response => {
-        const records = response.data.map(record => (
-          new Resource({ record, client: this.client })
-        ));
-        runInAction(() => {
-          this._status.set(STATUS_SUCCESS);
-          records.forEach(storeRecord(this.records));
-        });
-        return records;
-      })
-      .catch(handleError(this));
-  })
-
   all() {
     return this.records;
   }
 
-  loadById = action(({ id, options }) => {
-    this._status.set(STATUS_LOADING);
-    return this.client.find({ id, options })
-      .then(response => {
-        const record = new Resource({
-          record: response.data,
-          client: this.client,
-        });
-        runInAction(() => {
-          this._status.set(STATUS_SUCCESS);
-          storeRecord(this.records)(record);
-        });
-        return record;
-      })
-      .catch(handleError(this));
-  })
-
   byId({ id }) {
     return this.records.find(record => record.id === id);
   }
-
-  loadWhere = action(({ filter, options } = {}) => {
-    this._status.set(STATUS_LOADING);
-    return this.client.where({ filter, options })
-      .then(response => {
-        const resources = response.data.map(record => (
-          new Resource({ record, client: this.client })
-        ));
-        runInAction(() => {
-          this._status.set(STATUS_SUCCESS);
-          this.filtered.push({ filter, resources });
-          resources.forEach(storeRecord(this.records));
-        });
-        return resources;
-      })
-      .catch(handleError(this));
-  })
 
   where({ filter }) {
     const matchesRequestedFilter = matches(filter);
@@ -125,24 +168,6 @@ class ResourceStore {
     return entry.resources;
   }
 
-  loadRelated = action(({ parent, options } = {}) => {
-    this._status.set(STATUS_LOADING);
-    return this.client.related({ parent, options })
-      .then(response => {
-        const { id, type } = parent;
-        const resources = response.data.map(record => (
-          new Resource({ record, client: this.client })
-        ));
-        runInAction(() => {
-          this._status.set(STATUS_SUCCESS);
-          this.relatedRecords.push({ id, type, resources });
-          resources.forEach(storeRecord(this.records));
-        });
-        return resources;
-      })
-      .catch(handleError(this));
-  })
-
   related({ parent }) {
     const { type, id } = parent;
     const related = this.relatedRecords.find(matches({ type, id }));
@@ -153,20 +178,6 @@ class ResourceStore {
 
     return related.resources;
   }
-
-  create = action((partialRecord) => {
-    this._status.set(STATUS_LOADING);
-    return this.client.create(partialRecord)
-      .then(response => {
-        const record = response.data;
-        runInAction(() => {
-          this._status.set(STATUS_SUCCESS);
-          storeRecord(this.records)(record);
-        });
-        return record;
-      })
-      .catch(handleError(this));
-  })
 }
 
 module.exports = ResourceStore;

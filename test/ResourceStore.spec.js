@@ -651,4 +651,31 @@ describe('ResourceStore', () => {
       });
     });
   });
+
+  describe('remove', () => {
+    it('removes the post from the store', () => {
+      const matchingPost = {
+        type: 'widgets',
+        id: '2',
+        attributes: {
+          title: 'Matching',
+        },
+      };
+
+      const otherPost = {
+        type: 'widgets',
+        id: '1',
+        attributes: {
+          title: 'Non-Matching',
+        },
+      };
+
+      store.storeRecords([otherPost, matchingPost]);
+      store.remove(matchingPost);
+
+      const records = store.all();
+      expect(records.length).toEqual(1);
+      expect(records[0].attributes.title).toEqual(otherPost.attributes.title);
+    });
+  });
 });

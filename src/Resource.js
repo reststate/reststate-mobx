@@ -13,13 +13,42 @@ const handleError = (record) => (error) => {
 };
 
 class Resource {
-  constructor({ record, client }) {
+  constructor({ record, client, store }) {
     this.client = client;
+    this.store = store;
     this._status = observable.box(STATUS_INITIAL);
     this.type = record.type;
     this.id = record.id;
     this.attributes = observable(record.attributes || {});
     this.relationships = observable(record.relationships || {});
+
+    this.save = action(() => {
+      this._status.set(STATUS_LOADING);
+      const { type, id } = this;
+      const attributes = Object.assign({}, this.attributes);
+      const relationships = Object.assign({}, this.relationships);
+      return this.client.update({ type, id, attributes, relationships })
+        .then(response => {
+          runInAction(() => {
+            this._status.set(STATUS_SUCCESS);
+          });
+          return response;
+        })
+        .catch(handleError(this));
+    });
+
+    this.delete = action(() => {
+      this._status.set(STATUS_LOADING);
+      return this.client.delete({ id: this.id })
+        .then(response => {
+          runInAction(() => {
+            this._status.set(STATUS_SUCCESS);
+            this.store.remove(this);
+          });
+          return response;
+        })
+        .catch(handleError(this));
+    });
   }
 
   get loading() {
@@ -29,33 +58,6 @@ class Resource {
   get error() {
     return this._status.get() ===  STATUS_ERROR;
   }
-
-  save = action(() => {
-    this._status.set(STATUS_LOADING);
-    const { type, id } = this;
-    const attributes = Object.assign({}, this.attributes);
-    const relationships = Object.assign({}, this.relationships);
-    return this.client.update({ type, id, attributes, relationships })
-      .then(response => {
-        runInAction(() => {
-          this._status.set(STATUS_SUCCESS);
-        });
-        return response;
-      })
-      .catch(handleError(this));
-  })
-
-  delete = action(() => {
-    this._status.set(STATUS_LOADING);
-    return this.client.delete({ id: this.id })
-      .then(response => {
-        runInAction(() => {
-          this._status.set(STATUS_SUCCESS);
-        });
-        return response;
-      })
-      .catch(handleError(this));
-  })
 }
 
 module.exports = Resource;
