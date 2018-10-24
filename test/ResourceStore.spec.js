@@ -550,32 +550,6 @@ describe('ResourceStore', () => {
       attributes: widget.attributes,
     };
 
-    it('sets loading to true while loading', () => {
-      api.post.mockResolvedValue({
-        data: {
-          data: resultWidget,
-        },
-      });
-      store.create(widget);
-      expect(store.loading).toEqual(true);
-    });
-
-    it('resets the error flag', () => {
-      api.post
-        .mockRejectedValueOnce({ data: {} })
-        .mockResolvedValueOnce({
-          data: {
-            data: resultWidget,
-          },
-        });
-
-      return store.create(widget)
-        .catch(() => store.create(widget))
-        .then(() => {
-          expect(store.error).toEqual(false);
-        });
-    });
-
     describe('success', () => {
       let resolvedRecord;
 
@@ -597,10 +571,6 @@ describe('ResourceStore', () => {
           },
         };
         expect(api.post).toHaveBeenCalledWith('widgets', expectedBody);
-      });
-
-      it('sets loading to false when resolved', () => {
-        expect(store.loading).toEqual(false);
       });
 
       it('resolves to the returned record', () => {
@@ -636,18 +606,6 @@ describe('ResourceStore', () => {
 
       it('rejects with the response body', () => {
         expect(response).rejects.toEqual(errors);
-      });
-
-      it('sets loading to false when rejected', () => {
-        return response.catch(() => {
-          expect(store.loading).toEqual(false);
-        });
-      });
-
-      it('sets the error flag', () => {
-        return response.catch(() => {
-          expect(store.error).toEqual(true);
-        });
       });
     });
   });

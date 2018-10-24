@@ -39,32 +39,6 @@ describe('Resource', () => {
       },
     };
 
-    it('sets the loading flag while loading', () => {
-      api.patch.mockResolvedValue({
-        data: {
-          data: expectedRecord,
-        },
-      });
-      resource.save();
-      expect(resource.loading).toEqual(true);
-    });
-
-    it('resets the error flag', () => {
-      api.patch
-        .mockRejectedValueOnce()
-        .mockResolvedValueOnce({
-          data: {
-            data: expectedRecord,
-          },
-        });
-
-      return resource.save()
-        .catch(() => resource.save())
-        .then(() => {
-          expect(resource.error).toEqual(false);
-        });
-    });
-
     describe('success', () => {
       beforeEach(() => {
         api.patch.mockResolvedValue({
@@ -90,10 +64,6 @@ describe('Resource', () => {
             },
           },
         );
-      });
-
-      it('sets loading to false when done', () => {
-        expect(resource.loading).toEqual(false);
       });
     });
 
@@ -133,12 +103,6 @@ describe('Resource', () => {
       it('rejects with the response body', () => {
         expect(response).rejects.toEqual(errors);
       });
-
-      it('sets the error flag on the resource', () => {
-        response.catch(() => {
-          expect(resource.error).toEqual(true);
-        });
-      });
     });
   });
 
@@ -159,62 +123,34 @@ describe('Resource', () => {
       });
     });
 
-    it('resets the error flag', () => {
-      api.delete
-        .mockRejectedValueOnce()
-        .mockResolvedValueOnce();
-
-      return resource.delete()
-        .catch(() => resource.delete())
-        .then(() => {
-          expect(resource.error).toEqual(false);
-        });
-    });
-
     describe('success', () => {
       beforeEach(() => {
         api.delete.mockResolvedValue();
       });
 
-      it('sets loading to true while loading', () => {
-        resource.delete();
-        expect(resource.loading).toEqual(true);
-      });
-
       it('sends the correct API request', () => {
-        resource.delete().then(() => {
+        return resource.delete().then(() => {
           expect(api.delete).toHaveBeenCalledWith('widgets/42');
         });
       });
 
-      it('sets loading to false when done loading', () => {
-        resource.delete().then(() => {
-          expect(resource.loading).toEqual(false);
-        });
-      });
-
       it('removes the record from the store', () => {
-        resource.delete().then(() => {
+        return resource.delete().then(() => {
           expect(store.remove).toHaveBeenCalledWith(resource);
         });
       });
     });
 
     describe('error', () => {
+      const error = { dummy: 'error' };
+
       beforeEach(() => {
-        api.delete.mockRejectedValue();
+        api.delete.mockRejectedValue(error);
       });
 
       it('sets loading to false when done loading', () => {
-        resource.delete().catch(() => {
-          expect(resource.loading).toEqual(false);
-        });
-      });
-
-      it('sets error to true', () => {
-        resource.delete().catch(() => {
-          expect(resource.error).toEqual(true);
-        });
+        const response = resource.delete();
+        expect(response).rejects.toEqual(error);
       });
     });
   });

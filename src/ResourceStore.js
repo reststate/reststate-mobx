@@ -109,7 +109,6 @@ class ResourceStore {
     });
 
     this.create = action((partialRecord) => {
-      this._status.set(STATUS_LOADING);
       return this.client.create(partialRecord)
         .then(response => {
           const record = new Resource({
@@ -118,12 +117,10 @@ class ResourceStore {
             store: this,
           });
           runInAction(() => {
-            this._status.set(STATUS_SUCCESS);
             storeRecord(this.records)(record);
           });
           return record;
-        })
-        .catch(handleError(this));
+        });
     });
 
     this.storeRecords = action((records) => {
