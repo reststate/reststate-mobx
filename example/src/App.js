@@ -3,8 +3,7 @@ import { observer } from 'mobx-react';
 import axios from 'axios';
 import { ResourceStore } from '@reststate/mobx';
 
-const token =
-  'caeff36e945a13e4f26a19f8de4430360eb94bc34ec8409a2871f0f596e9d0a7';
+const token = process.env.REACT_APP_API_TOKEN;
 
 const httpClient = axios.create({
   baseURL: 'https://sandboxapi.reststate.org',
