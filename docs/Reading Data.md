@@ -1,6 +1,6 @@
 # Reading Data
 
-Working with JSON API data is split into two parts:
+Working with JSON:API data is split into two parts:
 
 - **load methods** are used to asynchronously request data from the server or update data on the server, storing the results into the store's state.
 - **observable methods** are used to synchronously access data from the module's state. These should be used in rendering out contents to React, for example. Because they are observable, React will rerender when they are changed.
@@ -62,7 +62,7 @@ console.log(widgets);
 
 ## loadRelated/related
 
-Finally, to load records related via JSON API relationships, use the `loadRelated` method. A nested resource URL is constructed like `categories/27/widgets`. (In the future we will look into using HATEOAS to let the server tell us the relationship URL).
+Finally, to load records related via JSON:API relationships, use the `loadRelated` method. A nested resource URL is constructed like `categories/27/widgets`. (In the future we will look into using HATEOAS to let the server tell us the relationship URL).
 
 ```javascript
 const parent = {

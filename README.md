@@ -2,9 +2,9 @@
 
 [![CircleCI](https://circleci.com/gh/reststate/reststate-mobx.svg?style=svg)](https://circleci.com/gh/reststate/reststate-mobx)
 
-`@reststate/mobx` allows you to access data from a [JSON API](http://jsonapi.org/) web service via [MobX](https://mobx.js.org/) objects. Because of JSON API's strong conventions, in most cases all you should need to do is tell `@reststate/mobx` the base URL of your web service, and which resources to access, and you should be set. No manual web request juggling!
+`@reststate/mobx` allows you to access data from a [JSON:API](http://jsonapi.org/) web service via [MobX](https://mobx.js.org/) objects. Because of JSON:API's strong conventions, in most cases all you should need to do is tell `@reststate/mobx` the base URL of your web service, and which resources to access, and you should be set. No manual web request juggling!
 
-This is a very early proof-of-concept, so many features of JSON API are not yet supported. Open a GitHub issue with any other features you'd like to see!
+This is a very early proof-of-concept, so many features of JSON:API are not yet supported. Open a GitHub issue with any other features you'd like to see!
 
 ## Synopsis
 
@@ -85,7 +85,7 @@ const httpClient = {
 };
 ```
 
-That's all you need to do--the JSON API spec takes care of the rest!
+That's all you need to do--the JSON:API spec takes care of the rest!
 
 ## Usage
 

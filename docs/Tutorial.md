@@ -14,7 +14,7 @@ Next, add the required libraries for  `@reststate/mobx`, MobX itself, as well as
 $ yarn add mobx mobx-react @reststate/mobx axios
 ```
 
-Next, we want to use `@reststate/mobx` to create a MobX store object for handling posts. The JSON API web service we'll be connecting to is [sandboxapi.reststate.org](https://sandboxapi.reststate.org/), a free service that allows you to create an account so you can write data as well as read it. Sign up for an account there.
+Next, we want to use `@reststate/mobx` to create a MobX store object for handling posts. The JSON:API web service we'll be connecting to is [sandboxapi.reststate.org](https://sandboxapi.reststate.org/), a free service that allows you to create an account so you can write data as well as read it. Sign up for an account there.
 
 Next, we need to get a token to authenticate with. We aren't going to build a login form as part of this tutorial. Instead, use a web service client app like [Postman](https://www.getpostman.com/) to send the following request:
 
@@ -90,7 +90,7 @@ Notice a few things:
 
 - We call a `loadAll` method to request the data from the server in the `componentDidMount` hook.
 - We use an `all` method to synchronously access the data for rendering.
-- The post's ID is available as a property on the `post` directly, but its title is under a `post.attributes` object. This is the standard JSON API resource object format, and to keep things simple `@reststate/mobx` exposes resources in the same format as JSON API.
+- The post's ID is available as a property on the `post` directly, but its title is under a `post.attributes` object. This is the standard JSON:API resource object format, and to keep things simple `@reststate/mobx` exposes resources in the same format as JSON:API.
 
 Run the app and you'll see some sample posts that were created by default for you when you signed up for a Sandbox API account.
 
@@ -174,7 +174,7 @@ createPost = (event) => {
 
 Notice a few things:
 
-- The object we pass to `postStore.create` follows the JSON API resource object format: the attributes are under an `attributes` object. (If you know JSON API, you may notice that we aren't passing a `type` property, though--`@reststate/mobx` can infer that from the fact that we're in the `posts` module.)
+- The object we pass to `postStore.create` follows the JSON:API resource object format: the attributes are under an `attributes` object. (If you know JSON:API, you may notice that we aren't passing a `type` property, though--`@reststate/mobx` can infer that from the fact that we're in the `posts` module.)
 - We clear out the title after the `create` operation succeeds.
 
 Run the app and you should be able to submit a new post, and it should appear in the list right away. This is because `@reststate/mobx` automatically adds it to the local store of posts; you don't need to do that manually.
@@ -192,4 +192,4 @@ Finally, let's make a way to delete posts. Add a delete button to each list item
 
 This time we don't need a method on the component; we can just call the method directly on the post object. Try it out and you can delete records from your list. They're removed from the server and from your local MobX store.
 
-With that, our tutorial is complete. Notice how much functionality we got without needing to write any custom store code! JSON API's conventions allow us to use a zero-configuration library like `@reststate/mobx`  to focus on our application and not on managing data.
+With that, our tutorial is complete. Notice how much functionality we got without needing to write any custom store code! JSON:API's conventions allow us to use a zero-configuration library like `@reststate/mobx`  to focus on our application and not on managing data.

@@ -2,7 +2,7 @@
 
 ## create
 
-To create records on the server and also store it locally, use the `create` method. Pass it an object containing an `attributes` object. This is similar to a JSON API record, but you don't need to specify the type -- the store will add the type.
+To create records on the server and also store it locally, use the `create` method. Pass it an object containing an `attributes` object. This is similar to a JSON:API record, but you don't need to specify the type -- the store will add the type.
 
 ```javascript
 const recordData = {
@@ -13,7 +13,7 @@ const recordData = {
 store.create(recordData);
 ```
 
-You can also save relationships by providing a `relationships` attribute, just like in the JSON API spec:
+You can also save relationships by providing a `relationships` attribute, just like in the JSON:API spec:
 
 ```javascript
 const recordData = {
