@@ -20,14 +20,15 @@ jobs:
 
       - run: yarn install
       - run: cd example && yarn install
+      - run: npm install -g wait-on
 
       - save_cache:
           paths:
             - node_modules
+            - example/node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
       - run: yarn test
-      - run: npm install -g wait-on
       - run: cd example && echo "SKIP_PREFLIGHT_CHECK=true" > .env
       - run: cd example && bin/cypress
