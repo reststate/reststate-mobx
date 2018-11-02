@@ -1,5 +1,4 @@
 #!/bin/bash
 
-yarn install
 yarn start & wait-on http://localhost:3000
 $(yarn bin)/cypress run
