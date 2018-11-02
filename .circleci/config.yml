@@ -2,7 +2,10 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8.12
+      - image: cypress/base:8
+        environment:
+          ## this enables colors in the output
+          TERM: xterm
     working_directory: ~/repo
 
     steps:
@@ -16,11 +19,16 @@ jobs:
           - v1-dependencies-
 
       - run: yarn install
+      - run: cd example && yarn install
+      - run: npm install -g wait-on
 
       - save_cache:
           paths:
             - node_modules
+            - example/node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
       - run: yarn test
+      - run: cd example && echo "SKIP_PREFLIGHT_CHECK=true" > .env
+      - run: cd example && bin/cypress
