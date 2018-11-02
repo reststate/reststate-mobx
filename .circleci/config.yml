@@ -26,4 +26,5 @@ jobs:
       - run: yarn test
       - run: sudo npm install -g wait-on
       - run: cd example && yarn install && yarn start & wait-on http://localhost:3000
+      - run: cd example && echo "SKIP_PREFLIGHT_CHECK=true" > .env
       - run: cd example && yarn cypress run
