@@ -24,6 +24,6 @@ jobs:
 
       # run tests!
       - run: yarn test
-      - run: yarn global add wait-on
+      - run: npm install -g wait-on
       - run: yarn start & wait-on http://localhost:3000
       - run: yarn cypress run
