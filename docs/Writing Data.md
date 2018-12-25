@@ -32,14 +32,25 @@ const recordData = {
 store.create(recordData);
 ```
 
-## update
+## save
 
-The returned record objects are instances of `Record`. To update records, mutate attributes, then call `update()` on the record:
+The returned record objects are instances of `Record`. To update records, mutate attributes, then call `save()` on the record:
 
 ```javascript
 const widget = store.byId({ id: 42 });
 widget.attributes.title = 'Updated Title';
-widget.update();
+widget.save();
+```
+
+## update
+
+`save()` will persist all attributes and relationships on the record to the server. If you only want to persist certain attributes or relationships, you can call `update()`, passing them in. The new values will be saved to the server and then updated in the record itself:
+
+```javascript
+const widget = store.byId({ id: 42 });
+widget.update({
+  attributes: { title: 'Updated Title' },
+});
 ```
 
 ## delete
