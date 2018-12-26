@@ -106,6 +106,95 @@ describe('Resource', () => {
     });
   });
 
+  describe.only('update', () => {
+    const expectedRecord = {
+      type: 'widgets',
+      id: '42',
+      attributes: {
+        title: 'New Title',
+      },
+    };
+
+    describe('success', () => {
+      beforeEach(() => {
+        api.patch.mockResolvedValue({
+          data: {
+            data: expectedRecord,
+          },
+        });
+
+        return resource.update({
+          attributes: {
+            title: 'New Title',
+          },
+        });
+      });
+
+      it('sends the correct API request', () => {
+        expect(api.patch).toHaveBeenCalledWith(
+          'widgets/42',
+          {
+            data: {
+              ...expectedRecord,
+            },
+          },
+        );
+      });
+
+      it('updates the attributes on the record', () => {
+        expect(resource.attributes.title).toEqual('New Title');
+      });
+    });
+
+    describe('error', () => {
+      const errors = [
+        {
+          title: "can't be blank",
+          detail: "title - can't be blank (3)",
+          code: '100',
+          source: {
+            pointer: '/data/attributes/title',
+          },
+          status: '422',
+        },
+      ];
+
+      let resource;
+      let response;
+
+      beforeEach(() => {
+        // TODO: resource needs to be re-assigned here or test fails; why?
+        resource = new Resource({
+          client,
+          record: {
+            type: 'widgets',
+            id: '42',
+            attributes: {
+              title: 'Old Title',
+            },
+          },
+        });
+
+        api.patch.mockRejectedValue(errors);
+        response = resource.update({
+          attributes: {
+            title: '',
+          },
+        });
+      });
+
+      it('rejects with the response body', () => {
+        expect(response).rejects.toEqual(errors);
+      });
+
+      it('does not update the attributes on the record', () => {
+        return response.catch(() => {
+          expect(resource.attributes.title).toEqual('Old Title');
+        });
+      });
+    });
+  });
+
   describe('delete', () => {
     let store;
 
