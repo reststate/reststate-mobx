@@ -82,7 +82,15 @@ class ResourceStore {
           ));
           runInAction(() => {
             this._status.set(STATUS_SUCCESS);
-            this.filtered.push({ filter, resources });
+            // TODO: cache IDs, not full resources
+            const matchesRequestedFilter = matches(filter);
+            const otherFilteredEntries = this.filtered.filter(
+              ({ filter: testFilter }) => !matchesRequestedFilter(testFilter),
+            );
+            this.filtered.replace([
+              ...otherFilteredEntries,
+              { filter, resources },
+            ]);
             resources.forEach(storeRecord(this.records));
           });
           return resources;
