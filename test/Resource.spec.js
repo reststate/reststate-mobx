@@ -106,7 +106,7 @@ describe('Resource', () => {
     });
   });
 
-  describe.only('update', () => {
+  describe('update', () => {
     const expectedRecord = {
       type: 'widgets',
       id: '42',
