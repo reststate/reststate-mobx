@@ -384,6 +384,52 @@ describe('ResourceStore', () => {
         expect(firstRecord.id).toEqual('2');
         expect(firstRecord.attributes.title).toEqual('Foo');
       });
+
+      it('overwrites previous results', async () => {
+        let records = store.where({ filter });
+        expect(records.length).toEqual(2);
+
+        api.get.mockResolvedValue({
+          data: {
+            data: [
+              {
+                type: 'widgets',
+                id: '4',
+                attributes: {
+                  title: 'Updated Title',
+                },
+              },
+            ],
+          },
+        });
+
+        await store.loadWhere({ filter });
+        records = store.where({ filter });
+        expect(records.length).toEqual(1);
+        expect(records[0].id).toEqual('4');
+      });
+
+      it('reflects changes in the results returned by where()', async () => {
+        let records = store.where({ filter });
+        expect(records[0].attributes.title).toEqual('Foo');
+
+        api.get.mockResolvedValue({
+          data: {
+            data: {
+              type: 'widgets',
+              id: records[0].id,
+              attributes: {
+                title: 'Updated Title',
+              },
+            },
+          },
+        });
+
+        await store.loadById({ id: records[0].id });
+
+        records = store.where({ filter });
+        expect(records[0].attributes.title).toEqual('Updated Title');
+      });
     });
 
     describe('error', () => {
