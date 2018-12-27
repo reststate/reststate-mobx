@@ -103,6 +103,7 @@ class ResourceStore {
       return this.client.related({ parent, options })
         .then(response => {
           const { id, type } = parent;
+          const relatedIds = response.data.map(record => record.id);
           const resources = response.data.map(record => (
             new Resource({ record, client: this.client, store: this })
           ));
@@ -114,8 +115,7 @@ class ResourceStore {
             );
             this.relatedRecords.replace([
               ...otherParentEntries,
-              // TODO: cache IDs, not full resources
-              { id, type, resources },
+              { id, type, relatedIds },
             ]);
             resources.forEach(storeRecord(this.records));
           });
@@ -189,7 +189,7 @@ class ResourceStore {
       return [];
     }
 
-    return related.resources;
+    return related.relatedIds.map(id => this.byId({ id }));
   }
 }
 
