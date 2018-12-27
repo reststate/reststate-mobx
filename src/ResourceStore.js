@@ -108,7 +108,14 @@ class ResourceStore {
           ));
           runInAction(() => {
             this._status.set(STATUS_SUCCESS);
-            this.relatedRecords.push({ id, type, resources });
+            const matchesParent = matches({ id, type });
+            const otherParentEntries = this.relatedRecords.filter(
+              record => !matchesParent(record),
+            );
+            this.relatedRecords.replace([
+              ...otherParentEntries,
+              { id, type, resources },
+            ]);
             resources.forEach(storeRecord(this.records));
           });
           return resources;
