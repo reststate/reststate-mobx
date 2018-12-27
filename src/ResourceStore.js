@@ -77,6 +77,7 @@ class ResourceStore {
       this._status.set(STATUS_LOADING);
       return this.client.where({ filter, options })
         .then(response => {
+          const ids = response.data.map(record => record.id);
           const resources = response.data.map(record => (
             new Resource({ record, client: this.client, store: this })
           ));
@@ -88,8 +89,7 @@ class ResourceStore {
             );
             this.filtered.replace([
               ...otherFilteredEntries,
-              // TODO: cache IDs, not full resources
-              { filter, resources },
+              { filter, ids },
             ]);
             resources.forEach(storeRecord(this.records));
           });
@@ -103,6 +103,7 @@ class ResourceStore {
       return this.client.related({ parent, options })
         .then(response => {
           const { id, type } = parent;
+          const relatedIds = response.data.map(record => record.id);
           const resources = response.data.map(record => (
             new Resource({ record, client: this.client, store: this })
           ));
@@ -114,8 +115,7 @@ class ResourceStore {
             );
             this.relatedRecords.replace([
               ...otherParentEntries,
-              // TODO: cache IDs, not full resources
-              { id, type, resources },
+              { id, type, relatedIds },
             ]);
             resources.forEach(storeRecord(this.records));
           });
@@ -178,7 +178,7 @@ class ResourceStore {
       return [];
     }
 
-    return entry.resources;
+    return entry.ids.map(id => this.byId({ id }));
   }
 
   related({ parent }) {
@@ -189,7 +189,7 @@ class ResourceStore {
       return [];
     }
 
-    return related.resources;
+    return related.relatedIds.map(id => this.byId({ id }));
   }
 }
 
