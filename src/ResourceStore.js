@@ -82,13 +82,13 @@ class ResourceStore {
           ));
           runInAction(() => {
             this._status.set(STATUS_SUCCESS);
-            // TODO: cache IDs, not full resources
             const matchesRequestedFilter = matches(filter);
             const otherFilteredEntries = this.filtered.filter(
               ({ filter: testFilter }) => !matchesRequestedFilter(testFilter),
             );
             this.filtered.replace([
               ...otherFilteredEntries,
+              // TODO: cache IDs, not full resources
               { filter, resources },
             ]);
             resources.forEach(storeRecord(this.records));
@@ -108,7 +108,15 @@ class ResourceStore {
           ));
           runInAction(() => {
             this._status.set(STATUS_SUCCESS);
-            this.relatedRecords.push({ id, type, resources });
+            const matchesParent = matches({ id, type });
+            const otherParentEntries = this.relatedRecords.filter(
+              record => !matchesParent(record),
+            );
+            this.relatedRecords.replace([
+              ...otherParentEntries,
+              // TODO: cache IDs, not full resources
+              { id, type, resources },
+            ]);
             resources.forEach(storeRecord(this.records));
           });
           return resources;
