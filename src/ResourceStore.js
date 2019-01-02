@@ -7,7 +7,7 @@ const STATUS_LOADING = 'LOADING';
 const STATUS_ERROR = 'ERROR';
 const STATUS_SUCCESS = 'SUCCESS';
 
-const storeRecord = (records) => (newRecord) => {
+const storeRecord = records => newRecord => {
   const existingRecord = records.find(r => r.id === newRecord.id);
   if (existingRecord) {
     Object.assign(existingRecord, newRecord);
@@ -18,13 +18,10 @@ const storeRecord = (records) => (newRecord) => {
   }
 };
 
-const matches = (criteria) => (test) => (
-  Object.keys(criteria).every(key => (
-    criteria[key] === test[key]
-  ))
-);
+const matches = criteria => test =>
+  Object.keys(criteria).every(key => criteria[key] === test[key]);
 
-const handleError = (store) => (error) => {
+const handleError = store => error => {
   runInAction(() => {
     store._status.set(STATUS_ERROR);
   });
@@ -41,11 +38,13 @@ class ResourceStore {
 
     this.loadAll = action(({ options } = {}) => {
       this._status.set(STATUS_LOADING);
-      return this.client.all({ options })
+      return this.client
+        .all({ options })
         .then(response => {
-          const records = response.data.map(record => (
-            new Resource({ record, client: this.client, store: this })
-          ));
+          const records = response.data.map(
+            record =>
+              new Resource({ record, client: this.client, store: this }),
+          );
           runInAction(() => {
             this._status.set(STATUS_SUCCESS);
             records.forEach(storeRecord(this.records));
@@ -57,7 +56,8 @@ class ResourceStore {
 
     this.loadById = action(({ id, options }) => {
       this._status.set(STATUS_LOADING);
-      return this.client.find({ id, options })
+      return this.client
+        .find({ id, options })
         .then(response => {
           const record = new Resource({
             record: response.data,
@@ -75,22 +75,21 @@ class ResourceStore {
 
     this.loadWhere = action(({ filter, options } = {}) => {
       this._status.set(STATUS_LOADING);
-      return this.client.where({ filter, options })
+      return this.client
+        .where({ filter, options })
         .then(response => {
           const ids = response.data.map(record => record.id);
-          const resources = response.data.map(record => (
-            new Resource({ record, client: this.client, store: this })
-          ));
+          const resources = response.data.map(
+            record =>
+              new Resource({ record, client: this.client, store: this }),
+          );
           runInAction(() => {
             this._status.set(STATUS_SUCCESS);
             const matchesRequestedFilter = matches(filter);
             const otherFilteredEntries = this.filtered.filter(
               ({ filter: testFilter }) => !matchesRequestedFilter(testFilter),
             );
-            this.filtered.replace([
-              ...otherFilteredEntries,
-              { filter, ids },
-            ]);
+            this.filtered.replace([...otherFilteredEntries, { filter, ids }]);
             resources.forEach(storeRecord(this.records));
           });
           return resources;
@@ -100,13 +99,15 @@ class ResourceStore {
 
     this.loadRelated = action(({ parent, options } = {}) => {
       this._status.set(STATUS_LOADING);
-      return this.client.related({ parent, options })
+      return this.client
+        .related({ parent, options })
         .then(response => {
           const { id, type } = parent;
           const relatedIds = response.data.map(record => record.id);
-          const resources = response.data.map(record => (
-            new Resource({ record, client: this.client, store: this })
-          ));
+          const resources = response.data.map(
+            record =>
+              new Resource({ record, client: this.client, store: this }),
+          );
           runInAction(() => {
             this._status.set(STATUS_SUCCESS);
             const matchesParent = matches({ id, type });
@@ -124,31 +125,32 @@ class ResourceStore {
         .catch(handleError(this));
     });
 
-    this.create = action((partialRecord) => {
-      return this.client.create(partialRecord)
-        .then(response => {
-          const record = new Resource({
-            record: response.data,
-            client: this.client,
-            store: this,
-          });
-          runInAction(() => {
-            storeRecord(this.records)(record);
-          });
-          return record;
+    this.create = action(partialRecord => {
+      return this.client.create(partialRecord).then(response => {
+        const record = new Resource({
+          record: response.data,
+          client: this.client,
+          store: this,
         });
+        runInAction(() => {
+          storeRecord(this.records)(record);
+        });
+        return record;
+      });
     });
 
-    this.storeRecords = action((records) => {
-      this.records.replace(records.map(record => (
-        new Resource({ record, client: this.client, store: this })
-      )));
+    this.storeRecords = action(records => {
+      this.records.replace(
+        records.map(
+          record => new Resource({ record, client: this.client, store: this }),
+        ),
+      );
     });
 
-    this.remove = action((record) => {
-      this.records.replace(this.records.filter(testRecord => (
-        testRecord.id !== record.id
-      )));
+    this.remove = action(record => {
+      this.records.replace(
+        this.records.filter(testRecord => testRecord.id !== record.id),
+      );
     });
   }
 
@@ -170,9 +172,9 @@ class ResourceStore {
 
   where({ filter }) {
     const matchesRequestedFilter = matches(filter);
-    const entry = this.filtered.find(({ filter: testFilter }) => (
-      matchesRequestedFilter(testFilter)
-    ));
+    const entry = this.filtered.find(({ filter: testFilter }) =>
+      matchesRequestedFilter(testFilter),
+    );
 
     if (!entry) {
       return [];

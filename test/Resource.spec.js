@@ -55,15 +55,12 @@ describe('Resource', () => {
       });
 
       it('sends the correct API request', () => {
-        expect(api.patch).toHaveBeenCalledWith(
-          'widgets/42',
-          {
-            data: {
-              ...expectedRecord,
-              relationships: {},
-            },
+        expect(api.patch).toHaveBeenCalledWith('widgets/42', {
+          data: {
+            ...expectedRecord,
+            relationships: {},
           },
-        );
+        });
       });
     });
 
@@ -131,14 +128,11 @@ describe('Resource', () => {
       });
 
       it('sends the correct API request', () => {
-        expect(api.patch).toHaveBeenCalledWith(
-          'widgets/42',
-          {
-            data: {
-              ...expectedRecord,
-            },
+        expect(api.patch).toHaveBeenCalledWith('widgets/42', {
+          data: {
+            ...expectedRecord,
           },
-        );
+        });
       });
 
       it('updates the attributes on the record', () => {
