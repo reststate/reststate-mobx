@@ -18,7 +18,8 @@ class Resource {
 
     this.update = action(({ attributes, relationships }) => {
       const { type, id } = this;
-      return this.client.update({ type, id, attributes, relationships })
+      return this.client
+        .update({ type, id, attributes, relationships })
         .then(response => {
           runInAction(() => {
             Object.assign(this.attributes, attributes);
@@ -29,13 +30,12 @@ class Resource {
     });
 
     this.delete = action(() => {
-      return this.client.delete({ id: this.id })
-        .then(response => {
-          runInAction(() => {
-            this.store.remove(this);
-          });
-          return response;
+      return this.client.delete({ id: this.id }).then(response => {
+        runInAction(() => {
+          this.store.remove(this);
         });
+        return response;
+      });
     });
   }
 }

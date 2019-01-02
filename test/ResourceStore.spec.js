@@ -31,15 +31,14 @@ describe('ResourceStore', () => {
     ];
 
     it('resets the error flag', () => {
-      api.get
-        .mockRejectedValueOnce()
-        .mockResolvedValueOnce({
-          data: {
-            data: records,
-          },
-        });
+      api.get.mockRejectedValueOnce().mockResolvedValueOnce({
+        data: {
+          data: records,
+        },
+      });
 
-      return store.loadAll()
+      return store
+        .loadAll()
         .catch(() => store.loadAll())
         .then(() => {
           expect(store.error).toEqual(false);
@@ -65,8 +64,7 @@ describe('ResourceStore', () => {
 
       describe('when passing no options', () => {
         beforeEach(() => {
-          return store.loadAll()
-            .then(records => resolvedRecords = records);
+          return store.loadAll().then(records => (resolvedRecords = records));
         });
 
         it('makes the correct API call', () => {
@@ -94,11 +92,11 @@ describe('ResourceStore', () => {
 
       describe('when passing an include option', () => {
         it('makes the correct API call', () => {
-          return store.loadAll({ options: fieldOptions })
-            .then(() => {
-              expect(api.get)
-                .toHaveBeenCalledWith('widgets?fields[widgets]=title');
-            });
+          return store.loadAll({ options: fieldOptions }).then(() => {
+            expect(api.get).toHaveBeenCalledWith(
+              'widgets?fields[widgets]=title',
+            );
+          });
         });
       });
     });
@@ -142,15 +140,14 @@ describe('ResourceStore', () => {
     };
 
     it('resets the error flag', () => {
-      api.get
-        .mockRejectedValueOnce()
-        .mockResolvedValueOnce({
-          data: {
-            data: record,
-          },
-        });
+      api.get.mockRejectedValueOnce().mockResolvedValueOnce({
+        data: {
+          data: record,
+        },
+      });
 
-      return store.loadById({ id })
+      return store
+        .loadById({ id })
         .catch(() => store.loadById({ id }))
         .then(() => {
           expect(store.error).toEqual(false);
@@ -185,13 +182,15 @@ describe('ResourceStore', () => {
             },
           });
 
-          return store.loadById({ id, options: fieldOptions })
-            .then(record => resolvedRecord = record);
+          return store
+            .loadById({ id, options: fieldOptions })
+            .then(record => (resolvedRecord = record));
         });
 
         it('calls the right API method', () => {
-          expect(api.get)
-            .toHaveBeenCalledWith('widgets/42?fields[widgets]=title');
+          expect(api.get).toHaveBeenCalledWith(
+            'widgets/42?fields[widgets]=title',
+          );
         });
 
         it('sets loading to false', () => {
@@ -237,13 +236,15 @@ describe('ResourceStore', () => {
             },
           });
 
-          return store.loadById({ id, options: fieldOptions })
-            .then(record => resolvedRecord = record);
+          return store
+            .loadById({ id, options: fieldOptions })
+            .then(record => (resolvedRecord = record));
         });
 
         it('calls the right API method', () => {
-          expect(api.get)
-            .toHaveBeenCalledWith('widgets/42?fields[widgets]=title');
+          expect(api.get).toHaveBeenCalledWith(
+            'widgets/42?fields[widgets]=title',
+          );
         });
 
         it('resolves to the right record', () => {
@@ -318,15 +319,14 @@ describe('ResourceStore', () => {
     });
 
     it('resets the error flag', () => {
-      api.get
-        .mockRejectedValueOnce()
-        .mockResolvedValueOnce({
-          data: {
-            data: records,
-          },
-        });
+      api.get.mockRejectedValueOnce().mockResolvedValueOnce({
+        data: {
+          data: records,
+        },
+      });
 
-      return store.loadWhere({ filter })
+      return store
+        .loadWhere({ filter })
         .catch(() => store.loadWhere({ filter }))
         .then(() => {
           expect(store.error).toEqual(false);
@@ -352,7 +352,8 @@ describe('ResourceStore', () => {
           },
         });
 
-        return store.loadWhere({ filter, options: fieldOptions })
+        return store
+          .loadWhere({ filter, options: fieldOptions })
           .then(response => {
             resolvedRecords = response;
           });
@@ -494,15 +495,14 @@ describe('ResourceStore', () => {
     });
 
     it('resets the error flag', () => {
-      api.get
-        .mockRejectedValueOnce()
-        .mockResolvedValueOnce({
-          data: {
-            data: records,
-          },
-        });
+      api.get.mockRejectedValueOnce().mockResolvedValueOnce({
+        data: {
+          data: records,
+        },
+      });
 
-      return store.loadRelated({ parent })
+      return store
+        .loadRelated({ parent })
         .catch(() => store.loadRelated({ parent }))
         .then(() => {
           expect(store.error).toEqual(false);
@@ -528,7 +528,8 @@ describe('ResourceStore', () => {
           },
         });
 
-        return store.loadRelated({ parent, options: fieldOptions })
+        return store
+          .loadRelated({ parent, options: fieldOptions })
           .then(response => {
             resolvedRecords = response;
           });
@@ -651,8 +652,7 @@ describe('ResourceStore', () => {
             data: resultWidget,
           },
         });
-        return store.create(widget)
-          .then(record => resolvedRecord = record);
+        return store.create(widget).then(record => (resolvedRecord = record));
       });
 
       it('sends the request to the server', () => {
