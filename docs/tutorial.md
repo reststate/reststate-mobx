@@ -84,6 +84,8 @@ class App extends Component {
     );
   }
 }
+
+export default observer(App);
 ```
 
 Notice a few things:
@@ -91,6 +93,7 @@ Notice a few things:
 - We call a `loadAll` method to request the data from the server in the `componentDidMount` hook.
 - We use an `all` method to synchronously access the data for rendering.
 - The post's ID is available as a property on the `post` directly, but its title is under a `post.attributes` object. This is the standard JSON:API resource object format, and to keep things simple `@reststate/mobx` exposes resources in the same format as JSON:API.
+- We wrap the `App` component with a call to mobx-react's `observer()` function. This configures it to be rerendered reactively when the data in `postStore.all()` changes.
 
 Run the app and you'll see some sample posts that were created by default for you when you signed up for a Sandbox API account.
 
