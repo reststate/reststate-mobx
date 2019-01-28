@@ -1,3 +1,4 @@
+import '@babel/polyfill';
 import { configure } from 'mobx';
 import ResourceStore from '../src/ResourceStore';
 
