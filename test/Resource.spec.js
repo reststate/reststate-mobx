@@ -1,3 +1,4 @@
+import '@babel/polyfill';
 import { configure, runInAction } from 'mobx';
 import { ResourceClient } from '@reststate/client';
 import Resource from '../src/Resource';
