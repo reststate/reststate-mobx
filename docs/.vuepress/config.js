@@ -1,6 +1,13 @@
 module.exports = {
   title: '@reststate/mobx',
-  ga: 'UA-128167246-3',
+  plugins: [
+    [
+      '@vuepress/google-analytics',
+      {
+        ga: 'UA-128167246-3',
+      },
+    ],
+  ],
   themeConfig: {
     nav: [
       { text: '@reststate/mobx', link: '/' },
