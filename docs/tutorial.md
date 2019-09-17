@@ -25,12 +25,12 @@ To demonstrate more of a realistic multi-page application, let's add [React Rout
 $ yarn add react-router-dom
 ```
 
-Next, we want to use `@reststate/mobx` to create stores for handling restaurants and dishes. The JSON:API web service we'll be connecting to is [sandboxapi.reststate.org](https://sandboxapi.reststate.org/), a free service that allows you to create an account so you can write data as well as read it. Sign up for an account there.
+Next, we want to use `@reststate/mobx` to create stores for handling restaurants and dishes. The JSON:API web service we'll be connecting to is [reststate.codingitwrong.com](https://reststate.codingitwrong.com/), a free service that allows you to create an account so you can write data as well as read it. Sign up for an account there.
 
 Next, we need to get a token to authenticate with. We aren't going to build a login form as part of this tutorial. Instead, use a web service client app like [Postman](https://www.getpostman.com/) to send the following request:
 
 ```
-POST https://sandboxapi.reststate.org/oauth/token
+POST https://reststate.codingitwrong.com/oauth/token
 
 grant_type=password
 username=you@yourodmain.com
@@ -56,7 +56,7 @@ import axios from 'axios';
 const token = '[the token you received from the POST request above]';
 
 const httpClient = axios.create({
-  baseURL: 'https://sandboxapi.reststate.org/',
+  baseURL: 'https://reststate.codingitwrong.com/',
   headers: {
     'Content-Type': 'application/vnd.api+json',
     Authorization: `Bearer ${token}`,
