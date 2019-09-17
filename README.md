@@ -89,7 +89,7 @@ That's all you need to do--the JSON:API spec takes care of the rest!
 
 ## Usage
 
-For more information on usage, see the [`@reststate/mobx` docs](https://mobx.reststate.org).
+For more information on usage, see the [`@reststate/mobx` docs](https://mobx.reststate.codingitwrong.com).
 
 ## License
 
