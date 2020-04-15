@@ -25,6 +25,7 @@
     "@babel/polyfill": "^7.2.5",
     "@babel/preset-env": "^7.1.0",
     "@vuepress/plugin-google-analytics": "^1.0.1",
+    "acorn": "^7.1.1",
     "babel-core": "^7.0.0-0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^25.1.0",
@@ -36,6 +37,7 @@
     "jest": "^25.1.0",
     "mobx": "^5.5.0",
     "prettier": "2.0.2",
+    "serialize-javascript": "^3.0.0",
     "vuepress": "^1.0.1"
   }
 }
