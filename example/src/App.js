@@ -6,7 +6,7 @@ import { ResourceStore } from '@reststate/mobx';
 const token = process.env.REACT_APP_API_TOKEN;
 
 const httpClient = axios.create({
-  baseURL: 'https://reststate.codingitwrong.com',
+  baseURL: 'https://sandbox.howtojsonapi.com',
   headers: {
     'Content-Type': 'application/vnd.api+json',
     'Authorization': `Bearer ${token}`,
