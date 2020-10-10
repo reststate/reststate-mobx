@@ -1,7 +1,7 @@
 # Installation
 
 ```
-# npm install --save @reststate/mobx
+# npm install --save @reststate/mobx mobx
 ```
 
 To create a MobX object corresponding to a resource on the server, create a `new ResourceStore()`:
