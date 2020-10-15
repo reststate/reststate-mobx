@@ -37,7 +37,7 @@
     "jest": "^26.0.1",
     "kind-of": "^6.0.3",
     "mobx": "^5.5.0",
-    "prettier": "2.0.5",
+    "prettier": "2.1.2",
     "serialize-javascript": "^4.0.0",
     "vuepress": "^1.0.1"
   }
