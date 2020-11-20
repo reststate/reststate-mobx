@@ -1,6 +1,6 @@
 # @reststate/mobx
 
-[![CircleCI](https://circleci.com/gh/reststate/reststate-mobx.svg?style=svg)](https://circleci.com/gh/reststate/reststate-mobx)
+**This package is no longer maintained.**
 
 `@reststate/mobx` allows you to access data from a [JSON:API](http://jsonapi.org/) web service via [MobX](https://mobx.js.org/) objects. Because of JSON:API's strong conventions, in most cases all you should need to do is tell `@reststate/mobx` the base URL of your web service, and which resources to access, and you should be set. No manual web request juggling!
 
