@@ -1,6 +1,6 @@
 {
   "name": "@reststate/mobx",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A JSON:API client and store layer for MobX",
   "main": "index.js",
   "repository": "git@github.com:reststate/reststate-mobx.git",
